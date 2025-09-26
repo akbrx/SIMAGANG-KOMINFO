@@ -1,0 +1,553 @@
+/* Reset CSS Dasar */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* Gaya Utama Body */
+body, html {
+    height: 100%;
+    font-family: 'Poppins', sans-serif;
+    color: #ffffff;
+    line-height: 1.6;
+}
+
+/* Kontainer Utama & Background */
+.hero-container {
+    height: 100vh;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    padding: 20px;
+
+    /* Ganti URL ini dengan gambar angkasa pilihan Anda */
+    background-image: linear-gradient(rgba(10, 2, 29, 0.7), rgba(10, 2, 29, 0.7)), url('https://images.unsplash.com/photo-1534796636912-3b95b3ab5986?q=80&w=2071&auto=format&fit=crop');
+    background-size: cover;
+    background-position: center;
+}
+
+/* Penempatan Logo */
+.logo-container {
+    position: absolute;
+    top: 30px;
+    left: 40px;
+}
+
+.logo-container img {
+    width: 90px; /* Sesuaikan ukuran logo */
+    height: auto;
+}
+
+/* Konten di Tengah */
+.content-container {
+    max-width: 800px;
+}
+
+.content-container h1 {
+    font-size: 3.5rem;
+    font-weight: 700;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.content-container h2 {
+    font-size: 1.5rem;
+    font-weight: 400;
+    margin-bottom: 20px;
+    opacity: 0.9;
+}
+
+.content-container p {
+    font-size: 1.1rem;
+    margin-bottom: 40px;
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+/* Tombol Aksi */
+.button-container {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    flex-wrap: wrap;
+}
+
+.btn {
+    display: inline-block;
+    padding: 15px 35px;
+    border-radius: 50px;
+    text-decoration: none;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    border: 2px solid transparent;
+}
+
+.btn-primary {
+    background-color: #007bff;
+    color: white;
+}
+
+.btn-primary:hover {
+    background-color: #0056b3;
+    transform: translateY(-3px);
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+}
+
+.btn-secondary {
+    background-color: transparent;
+    color: white;
+    border: 2px solid #ffffff;
+}
+
+.btn-secondary:hover {
+    background-color: #ffffff;
+    color: #1a1a2e;
+    transform: translateY(-3px);
+}
+
+/* Media Query untuk Mobile */
+@media (max-width: 768px) {
+    .content-container h1 {
+        font-size: 2.5rem;
+    }
+    .logo-container {
+        top: 20px;
+        left: 20px;
+    }
+    .logo-container img {
+        width: 120px;
+    }
+}
+
+/* === CSS UNTUK NAVBAR === */
+
+.navbar {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 50px;
+    background-color: rgba(26, 26, 46, 0.2); /* Sedikit transparan */
+    backdrop-filter: blur(5px); /* Efek blur pada background */
+}
+
+.navbar-brand {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    text-decoration: none;
+}
+
+.navbar-logo {
+    width: 30px; /* Ukuran logo di navbar */
+    height: auto;
+}
+
+.navbar-links {
+    list-style: none;
+    display: flex;
+    gap: 30px;
+    margin: 0;
+    padding: 0;
+}
+
+.navbar-links a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: 600;
+    font-size: 1rem;
+    padding-bottom: 5px;
+    position: relative;
+    transition: color 0.3s ease;
+}
+
+/* Efek garis bawah saat di-hover */
+.navbar-links a::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background-color: #ffffff;
+    transition: width 0.3s ease;
+}
+
+.navbar-links a:hover {
+    color: #d1d1d1;
+}
+
+.navbar-links a:hover::after {
+    width: 100%;
+}
+
+/* Pusatkan konten utama sedikit ke bawah agar tidak tertutup navbar */
+.content-container {
+    padding-top: 60px;
+}
+
+/* === SECTION CARA KERJA (HOW IT WORKS) === */
+
+.how-it-works {
+    background-color: #0d021d; /* Warna background disamakan dengan hero */
+    padding: 80px 20px;
+    text-align: center;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+.how-it-works .container {
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+.how-it-works h2 {
+    font-size: 2.8rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+    color: #ffffff;
+}
+
+.how-it-works .section-intro {
+    font-size: 1.1rem;
+    color: #a9a9b3;
+    max-width: 700px;
+    margin: 0 auto 60px auto;
+}
+
+.steps-container {
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap; /* Agar responsif di mobile */
+}
+
+.step-card {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 40px;
+    max-width: 350px;
+    text-align: left;
+    position: relative;
+    overflow: hidden;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.step-card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 10px 30px rgba(0, 123, 255, 0.2);
+}
+
+.step-card .step-number {
+    position: absolute;
+    top: -20px;
+    right: 20px;
+    font-size: 5rem;
+    font-weight: 800;
+    color: rgba(255, 255, 255, 0.05);
+    z-index: 0;
+}
+
+.step-card h3 {
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    color: #ffffff;
+    position: relative;
+    z-index: 1;
+}
+
+.step-card p {
+    color: #a9a9b3;
+    position: relative;
+    z-index: 1;
+}
+
+/* === CSS UNTUK FOOTER === */
+
+.site-footer {
+    background-color: #080111; /* Warna lebih gelap dari background utama */
+    color: #a9a9b3;
+    padding-top: 60px;
+    font-size: 0.9rem;
+}
+
+.footer-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+    gap: 40px;
+}
+
+.footer-about, .footer-contact, .footer-links {
+    flex: 1;
+    min-width: 280px; /* Agar responsif */
+}
+
+.footer-logo {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.footer-logo img {
+    height: 50px; /* Menyamakan tinggi logo */
+    width: auto;
+}
+
+.footer-about p {
+    line-height: 1.8;
+}
+
+.site-footer h4 {
+    color: #ffffff;
+    font-size: 1.2rem;
+    margin-bottom: 20px;
+    font-weight: 600;
+}
+
+.footer-links ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.footer-links ul li {
+    margin-bottom: 12px;
+}
+
+.footer-links a {
+    color: #a9a9b3;
+    text-decoration: none;
+    transition: color 0.3s ease;
+}
+
+.footer-links a:hover {
+    color: #007bff;
+}
+
+.footer-bottom {
+    text-align: center;
+    margin-top: 50px;
+    padding: 20px 0;
+    border-top: 1px solid rgba(255, 255, 255, 0.1);
+}
+
+/* === CSS HALAMAN PENGAJUAN & MODAL === */
+
+/* === KONTAINER UTAMA HALAMAN === */
+.page-container {
+    background-color: #0d021d;
+    color: #ffffff;
+    padding: 90px 20px;
+    min-height: 100vh;
+    width: 100%;
+}
+
+.procedure-container {
+    max-width: 900px;
+    margin: 0 auto;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 40px;
+    text-align: center;
+}
+
+.procedure-container h1 {
+    font-size: 2.5rem;
+    font-weight: 700;
+    margin-bottom: 20px;
+}
+
+.procedure-container > p { /* Menargetkan paragraf deskripsi langsung di bawah h1 */
+    max-width: 600px;
+    margin-left: auto;
+    margin-right: auto;
+    color: #a9a9b3;
+    font-size: 1.1rem;
+}
+
+
+/* === PROSEDUR TIMELINE MODERN === */
+.procedure-timeline {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    position: relative;
+    margin: 60px 0;
+}
+
+/* Garis penghubung di belakang ikon */
+.procedure-timeline::before {
+    content: '';
+    position: absolute;
+    top: 30px;
+    left: 15%;
+    right: 15%;
+    height: 2px;
+    background-color: rgba(255, 255, 255, 0.1);
+    z-index: 0;
+}
+
+.timeline-step {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    width: 30%;
+    position: relative;
+    z-index: 1;
+}
+
+.timeline-icon {
+    width: 60px;
+    height: 60px;
+    background-color: #334155;
+    border: 2px solid #475569;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin-bottom: 20px;
+    transition: all 0.3s ease;
+}
+
+.timeline-step:hover .timeline-icon {
+    background-color: #007bff;
+    border-color: #007bff;
+    transform: scale(1.1);
+}
+
+.timeline-icon svg {
+    width: 28px;
+    height: 28px;
+    color: #ffffff;
+}
+
+.timeline-content h4 {
+    font-size: 1.2rem;
+    font-weight: 600;
+    margin-bottom: 10px;
+    color: #ffffff;
+}
+
+.timeline-content p {
+    font-size: 0.9rem;
+    color: #a9a9b3;
+    line-height: 1.6;
+}
+
+
+/* === MODAL & FORMULIR === */
+.modal-overlay {
+    display: none; /* Awalnya tersembunyi */
+    position: fixed;
+    z-index: 1000;
+    left: 0;
+    top: 0;
+    width: 100%;
+    height: 100%;
+    overflow: auto;
+    background-color: rgba(0, 0, 0, 0.7);
+    justify-content: center;
+    align-items: center;
+}
+
+.modal-content {
+    background-color: #1e293b;
+    color: #ffffff;
+    padding: 30px;
+    border-radius: 10px;
+    width: 90%;
+    max-width: 500px;
+    position: relative;
+    animation: slide-down 0.5s ease;
+}
+
+@keyframes slide-down {
+    from {
+        transform: translateY(-50px);
+        opacity: 0;
+    }
+    to {
+        transform: translateY(0);
+        opacity: 1;
+    }
+}
+
+.modal-close {
+    position: absolute;
+    top: 15px;
+    right: 15px;
+    color: #aaa;
+    font-size: 28px;
+    font-weight: bold;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.modal-close:hover {
+    color: #ffffff;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    font-weight: 600;
+}
+
+.form-group input {
+    width: 100%;
+    padding: 12px;
+    background-color: #334155;
+    border: 1px solid #475569;
+    border-radius: 6px;
+    color: #ffffff;
+    font-size: 1rem;
+}
+
+.form-group input[type="file"] {
+    padding: 8px;
+}
+
+/* Gaya untuk Tombol (bisa juga global) */
+#btn-open-modal {
+    margin-top: 20px;
+}
+
+
+/* === DESAIN RESPONSIVE (KHUSUS HALAMAN INI) === */
+@media (max-width: 768px) {
+    .procedure-timeline {
+        flex-direction: column;
+        align-items: center;
+        gap: 40px;
+    }
+
+    .timeline-step {
+        width: 80%;
+    }
+
+    .procedure-timeline::before {
+        display: none;
+    }
+}
