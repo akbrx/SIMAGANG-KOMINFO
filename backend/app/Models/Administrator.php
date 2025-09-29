@@ -1,0 +1,41 @@
+<?php
+
+namespace App\Models;
+
+use Illuminate\Database\Eloquent\Factories\HasFactory;
+use Illuminate\Foundation\Auth\User as Authenticatable;
+use App\Models\Submission;
+
+class Administrator extends Authenticatable
+{
+    use HasFactory;
+
+    // Nama tabel di database
+    protected $table = 'administrators'; 
+
+    /**
+     * Kolom yang dapat diisi secara massal (mass assignable).
+     */
+    protected $fillable = [
+        'nama',
+        'email',
+        'password',
+    ];
+
+    /**
+     * Kolom yang harus disembunyikan saat serialisasi (misalnya saat diubah menjadi JSON).
+     */
+    protected $hidden = [
+        'password',
+        'remember_token',
+    ];
+    
+    /**
+     * Relasi One-to-Many: Satu Admin memproses banyak Submission.
+     */
+    public function processedSubmissions()
+    {
+        // processed_by adalah foreign key di tabel submissions yang menunjuk ke admin
+        return $this->hasMany(Submission::class, 'processed_by');
+    }
+}
