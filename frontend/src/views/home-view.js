@@ -8,9 +8,6 @@ export class HomeView {
     render() {
     this.app.innerHTML = `
         <div  class="hero-container">
-            
-            
-
             <main id="home-section" class="content-container">
                 <h1>Sistem Informasi Magang</h1>
                 <h2>Dinas Komunikasi Informatika Statistik dan Persandian</h2>

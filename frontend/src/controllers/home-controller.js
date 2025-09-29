@@ -2,9 +2,8 @@
 
 import { HomeView } from '../Views/home-view.js';
 import { HomeModel } from '../Models/home.js';
-// Impor controller lain yang akan dipanggil
 import { PengajuanController } from './pengajuan-controller.js'; 
-// import { LacakController } from './lacak-controller.js';
+import { TrackingController } from './lacak-controller.js';
 
 export class HomeController {
     constructor() {
@@ -12,9 +11,8 @@ export class HomeController {
         this.homeModel = new HomeModel();
     }
 
-    /**
-     * Fungsi utama untuk menampilkan halaman home.
-     */
+
+    //Fungsi utama untuk menampilkan halaman home.
     showHomePage() {
         this.homeView.render();
         this.homeView.bindButtons(this.handleNavigateToPengajuan, this.handleNavigateToLacak);
@@ -42,27 +40,18 @@ export class HomeController {
             });
         }
     }
-
     
-
-    /**
-     * Handler yang dipanggil saat tombol "Ajukan Magang" diklik.
-     */
+    //Handler yang dipanggil saat tombol "Ajukan Magang" diklik.
     handleNavigateToPengajuan() {
         console.log("Navigasi ke halaman Pengajuan...");
         const pengajuanController = new PengajuanController();
         pengajuanController.showPengajuanPage();
     }
-
-    /**
-     * Handler yang dipanggil saat tombol "Lacak Pengajuan" diklik.
-     */
+    
+    //Handler yang dipanggil saat tombol "Lacak Pengajuan" diklik.
     handleNavigateToLacak() {
         console.log("Navigasi ke halaman Lacak...");
-        // Di sini Anda akan menginisialisasi dan memanggil LacakController
-        // Contoh:
-        // const lacakController = new LacakController();
-        // lacakController.showLacakPage();
-        alert("TODO: Pindah ke halaman pelacakan");
+        const trackingController = new TrackingController();
+        trackingController.showTrackingPage();
     }
 }
