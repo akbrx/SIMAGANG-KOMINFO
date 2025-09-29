@@ -43,27 +43,50 @@ export class TrackingController {
     }
 
     // Fungsi ini HANYA untuk simulasi, nantinya akan dihapus
-    getFakeStatus(id) {
-        // Data palsu untuk tujuan demonstrasi
-        const statuses = {
-            "PNV-123XYZ": { 
-                id: "PNV-123XYZ", 
-                status: "Diverifikasi", 
-                logs: [
-                    { status: "Diajukan", timestamp: "28 Sep 2025, 10:05" },
-                    { status: "Diverifikasi", timestamp: "29 Sep 2025, 09:30" }
-                ] 
-            },
-            "PNV-456ABC": { 
-                id: "PNV-456ABC", 
-                status: "Selesai", 
-                logs: [
-                    { status: "Diajukan", timestamp: "27 Sep 2025, 14:20" },
-                    { status: "Diverifikasi", timestamp: "28 Sep 2025, 11:00" },
-                    { status: "Selesai", timestamp: "29 Sep 2025, 10:15" }
-                ] 
-            }
-        };
-        return statuses[id.toUpperCase()];
-    }
+    // /src/controllers/tracking-controller.js
+
+// ... (kode lain)
+
+// Ganti fungsi ini dengan versi yang lebih lengkap
+getFakeStatus(id) {
+    const statuses = {
+        "PNV-DITERIMA": { 
+            id: "PNV-DITERIMA", 
+            status: "Diterima", 
+            catatan: "Selamat! Surat balasan telah dikirim ke email Anda. Silakan periksa folder inbox atau spam.",
+            logs: [
+                { status: "Diajukan", timestamp: "25 Sep 2025, 14:20" },
+                { status: "Diverifikasi", timestamp: "26 Sep 2025, 11:00" },
+                { status: "Diterima", timestamp: "28 Sep 2025, 10:15" }
+            ] 
+        },
+        "PNV-DITOLAK": { 
+            id: "PNV-DITOLAK", 
+            status: "Ditolak", 
+            catatan: "Mohon maaf, kuota magang untuk periode yang diajukan sudah penuh. Silakan coba lagi di periode selanjutnya.",
+            logs: [
+                { status: "Diajukan", timestamp: "24 Sep 2025, 09:00" },
+                { status: "Diverifikasi", timestamp: "25 Sep 2025, 15:45" }
+            ] 
+        },
+        "PNV-DISPOSISI": { 
+            id: "PNV-DISPOSISI", 
+            status: "Disposisi",
+            catatan: "Pengajuan Anda sedang dalam proses peninjauan oleh tim kami.", 
+            logs: [
+                { status: "Diajukan", timestamp: "28 Sep 2025, 10:05" },
+                { status: "Diverifikasi", timestamp: "29 Sep 2025, 09:30" }
+            ] 
+        },
+        "PNV-DIAJUKAN": { 
+            id: "PNV-DIAJUKAN", 
+            status: "Diajukan",
+            catatan: "Pengajuan Anda sedang dalam proses.", 
+            logs: [
+                { status: "Diajukan", timestamp: "28 Sep 2025, 10:05" }
+            ] 
+        }
+    };
+    return statuses[id.toUpperCase()];
+}
 }

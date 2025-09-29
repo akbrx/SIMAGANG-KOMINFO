@@ -1,5 +1,3 @@
-// /src/app.js
-
 import { HomeController } from './controllers/home-controller.js';
 import { PengajuanController } from './controllers/pengajuan-controller.js';
 
