@@ -40,6 +40,7 @@ class AdminSubmissionController extends Controller
         $validator = Validator::make($request->all(), [
             'status' => 'required|in:' . implode(',', $this->validStatuses),
             'admin_notes' => 'nullable|string|max:500',
+            'processed_by' => 'nullable|exists:administrators,id',
         ]);
 
         if ($validator->fails()) {

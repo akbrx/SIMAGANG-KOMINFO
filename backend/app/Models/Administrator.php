@@ -20,6 +20,11 @@ class Administrator extends Authenticatable
         'nama',
         'email',
         'password',
+
+    ];
+    protected $casts = [
+        'created_at'      => 'datetime:d F Y H:i', // Ini untuk created_at
+        'updated_at'      => 'datetime:d F Y H:i',
     ];
 
     /**
