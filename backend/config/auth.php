@@ -40,6 +40,13 @@ return [
             'driver' => 'session',
             'provider' => 'users',
         ],
+        // <<< GUARD BARU UNTUK ADMIN >>>
+        'api' => [
+            'driver' => 'sanctum', // Menggunakan Sanctum untuk API
+            'provider' => 'administrators',
+            'hash' => false // Menggunakan provider administrators
+        ],
+        // <<< AKHIR GUARD BARU >>>
     ],
 
     /*
@@ -64,6 +71,12 @@ return [
             'driver' => 'eloquent',
             'model' => env('AUTH_MODEL', App\Models\User::class),
         ],
+        // <<< PROVIDER BARU UNTUK ADMINISTRATOR >>>
+        'administrators' => [ 
+            'driver' => 'eloquent',
+            'model' => App\Models\Administrator::class, // Model Administrator kita
+        ],
+        // <<< AKHIR PROVIDER BARU >>>
 
         // 'users' => [
         //     'driver' => 'database',

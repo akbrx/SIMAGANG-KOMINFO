@@ -14,11 +14,9 @@ class Submission extends Model
     // Tambahkan kolom yang bisa diisi
     protected $fillable = [
         'student_id',
-        'unique_token',
-        'start_date',
-        'end_date',
+        'unique_token', 
+        'durasi_magang',
         'submission_file',
-        'submission_date',
         'status',
         'admin_notes',
         'processed_by',
@@ -26,16 +24,11 @@ class Submission extends Model
     ];
 
     protected $casts = [
-        'processed_at'    => 'datetime:d F Y H:i', // <<< INI UNTUK processed_at
-        'created_at'      => 'datetime:d F Y H:i', // Ini untuk created_at
-        'updated_at'      => 'datetime:d F Y H:i',
+        'processed_at'  => 'datetime:d F Y H:i',
+        'created_at'    => 'datetime:d F Y H:i',
+        'updated_at'    => 'datetime:d F Y H:i',
     ];
-    protected function serializeDate(\DateTimeInterface $date)
-    {
-        return Carbon::parse($date)->setTimezone(config('app.timezone'))->format('d F Y H:i');
-    }
 
-    
 
     public function student()
     {

@@ -5,10 +5,11 @@ namespace App\Models;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use App\Models\Submission;
+use Laravel\Sanctum\HasApiTokens;
 
 class Administrator extends Authenticatable
 {
-    use HasFactory;
+    use HasApiTokens, HasFactory;
 
     // Nama tabel di database
     protected $table = 'administrators'; 

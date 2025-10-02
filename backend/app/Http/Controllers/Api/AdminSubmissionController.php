@@ -7,6 +7,10 @@ use Illuminate\Http\Request;
 use App\Models\Submission;
 use Illuminate\Support\Facades\Validator;
 use Exception;
+use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Storage;
+use App\Models\Submission as SubmissionModel;
+
 
 class AdminSubmissionController extends Controller
 {
@@ -36,51 +40,80 @@ class AdminSubmissionController extends Controller
      */
     public function update(Request $request, $id)
     {
-        // 1. Validasi Input Admin
+        // 1. Validasi Input
         $validator = Validator::make($request->all(), [
-            'status' => 'required|in:' . implode(',', $this->validStatuses),
-            'admin_notes' => 'nullable|string|max:500',
-            'processed_by' => 'nullable|exists:administrators,id',
+            'status' => 'required|string|in:pending,diproses,diterima,ditolak',
+            'admin_notes' => 'nullable|string|max:1000',
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validasi gagal',
-                'errors' => $validator->errors(),
-            ], 422);
+            return response()->json(['success' => false, 'errors' => $validator->errors()], 422);
         }
 
-        try {
-            // 2. Cari Submission
-            $submission = Submission::find($id);
+        // 2. Ambil data admin yang sedang login
+        $admin = $request->user();
 
-            if (!$submission) {
-                return response()->json([
-                    'success' => false,
-                    'message' => 'Pengajuan tidak ditemukan.'
-                ], 404);
-            }
+        // 3. Cari data pengajuan
+        $submission = Submission::find($id);
+        if (!$submission) {
+            return response()->json(['success' => false, 'message' => 'Data pengajuan tidak ditemukan.'], 404);
+        }
 
-            // 3. Update Status dan Catatan
-            $submission->update([
-                'status' => $request->status,
-                'admin_notes' => $request->admin_notes,
-                'processed_at' => now(), // Catat waktu diproses
-            ]);
+        // 4. --- LOGIKA HYBRID ---
+        
+        // Cek apakah ini pertama kalinya pengajuan diproses
+        if (is_null($submission->processed_at)) {
+            // Jika ya, catat waktunya. Waktu ini TIDAK akan diubah lagi.
+            $submission->processed_at = now();
+        }
+        
+        // Kolom 'processed_by' SELALU di-update dengan ID admin terakhir
+        // yang melakukan perubahan.
+        $submission->processed_by = $admin->id;
+        
+        // Update status dan catatan selalu dijalankan
+        $submission->status = $request->status;
+        $submission->admin_notes = $request->admin_notes;
+        
+        $submission->save();
 
-            // 4. Response Sukses
-            return response()->json([
-                'success' => true,
-                'message' => 'Status pengajuan berhasil diperbarui.',
-                'data' => $submission->load('student') // Muat ulang dengan data student
-            ]);
+        // 5. Berikan response sukses
+        return response()->json([
+            'success' => true,
+            'message' => 'Status pengajuan berhasil diperbarui.',
+            'data' => $submission,
+        ]);
+    }
+    public function downloadFile(Request $request, $id)
+    {
+        // 1. Cari data pengajuan berdasarkan ID
+        $submission = Submission::find($id);
 
-        } catch (Exception $e) {
+        // 2. Jika data pengajuan tidak ditemukan, kirim response 404
+        if (!$submission) {
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat memperbarui status: ' . $e->getMessage(),
-            ], 500);
+                'message' => 'Data pengajuan tidak ditemukan.',
+            ], 404);
         }
+
+        // 3. Cek apakah ada file yang tercatat di database dan file fisiknya ada di storage
+        if (!$submission->submission_file || !Storage::disk('public')->exists($submission->submission_file)) {
+            return response()->json([
+                'success' => false,
+                'message' => 'File untuk pengajuan ini tidak ditemukan di server.',
+            ], 404);
+        }
+
+        // 4. Jika file ada, buat URL yang bisa diakses publik
+        //    Pastikan kamu sudah menjalankan 'php artisan storage:link'
+        $fileUrl = asset('storage/' . $submission->submission_file);
+
+        // 5. Kirim response sukses berisi URL file
+        return response()->json([
+            'success' => true,
+            'message' => 'URL file berhasil didapatkan.',
+            'file_url' => $fileUrl,
+        ]);
     }
 }

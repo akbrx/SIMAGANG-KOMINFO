@@ -40,8 +40,8 @@ class StudentSubmissionController extends Controller
             'jurusan' => 'nullable|string|max:255',
             'nomor_telepon' => 'nullable|string|max:15',
             'email' => 'required|email|max:255', 
-            'start_date' => 'required|date',
-            'end_date' => 'required|date|after_or_equal:start_date',
+            'asal_sekolah' => 'nullable|string|max:255',
+            'durasi_magang' => 'required|string|max:100',
             'submission_file' => 'required|file|mimes:pdf,doc,docx|max:5120', // Maks 5MB
         ], [
             // Pesan Error dalam Bahasa Indonesia
@@ -61,7 +61,7 @@ class StudentSubmissionController extends Controller
             // 2. SELALU BUAT RECORD STUDENT BARU UNTUK SETIAP PENGAJUAN
             // Ini memungkinkan mahasiswa mengajukan ulang jika token lama hilang.
             $student = Student::create(
-                $request->only(['nama', 'jurusan', 'nomor_telepon', 'email'])
+                $request->only(['nama', 'jurusan', 'nomor_telepon', 'email', 'asal_sekolah'])
             );
             
             // 3. FILE UPLOAD
@@ -76,10 +76,8 @@ class StudentSubmissionController extends Controller
             $submission = Submission::create([
                 'student_id' => $student->id,
                 'unique_token' => $uniqueToken,
-                'start_date' => $request->start_date,
-                'end_date' => $request->end_date,
+                'durasi_magang' => $request->durasi_magang,
                 'submission_file' => $filePath, // Simpan path file
-                'submission_date' => now(),
                 'status' => 'pending', // Default status
             
             ]);
@@ -138,7 +136,7 @@ class StudentSubmissionController extends Controller
             'data' => [
                 'token' => $submission->unique_token,
                 'status' => ucfirst($submission->status), // Uppercase first letter
-                'submission_date' => $submission->submission_date,
+                'durasi_magang' => $submission->durasi_magang,
                 'processed_at' => $submission->processed_at ? $submission->processed_at->format('d M Y H:i') : null,
                 'admin_notes' => $submission->admin_notes,
                 'student_name' => $submission->student->nama, // Ambil nama student

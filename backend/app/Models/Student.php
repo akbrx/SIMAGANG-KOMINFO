@@ -16,6 +16,7 @@ class Student extends Model
         'jurusan',
         'nomor_telepon',
         'email',
+        'asal_sekolah',
     ];
     protected $casts = [
         'created_at'      => 'datetime:d F Y H:i', // Ini untuk created_at
