@@ -1,16 +1,28 @@
-/* Reset CSS Dasar */
 * {
     margin: 0;
     padding: 0;
     box-sizing: border-box;
 }
 
-/* Gaya Utama Body */
-body, html {
-    height: 100%;
+body {
+    margin: 0;
     font-family: 'Poppins', sans-serif;
     color: #ffffff;
     line-height: 1.6;
+    overflow-x: hidden;
+    
+    background-color: #000010; /* Warna biru sangat gelap */
+    background-image: 
+        linear-gradient(rgba(0, 123, 255, 0.1) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(0, 123, 255, 0.1) 1px, transparent 1px);
+    background-size: 50px 50px;
+    animation: grid-pan 5s linear infinite;
+}
+
+/* Animasi untuk menggerakkan grid */
+@keyframes grid-pan {
+    0% { background-position: 0 0; }
+    100% { background-position: 50px 50px; }
 }
 
 /* Kontainer Utama & Background */
@@ -18,6 +30,7 @@ body, html {
     height: 100vh;
     width: 100%;
     display: flex;
+    background-color: transparent;
     flex-direction: column;
     justify-content: center;
     align-items: center;
@@ -25,7 +38,7 @@ body, html {
     padding: 20px;
 
     /* Ganti URL ini dengan gambar angkasa pilihan Anda */
-    background-color: #0d021d;
+    background-color: transparent;
     background-size: cover;
     background-position: center;
 }
@@ -131,12 +144,16 @@ body, html {
     top: 0;
     left: 0;
     width: 100%;
+    z-index: 10;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 15px 50px;
-    background-color: rgba(26, 26, 46, 0.2); /* Sedikit transparan */
-    backdrop-filter: blur(5px); /* Efek blur pada background */
+    font-family: 'Roboto Mono', monospace;
+
+    background-color: #0b0112; 
+    border-bottom: 1px solid #ffffff;
+
 }
 
 .navbar-brand {
@@ -200,7 +217,7 @@ body, html {
 /* === SECTION CARA KERJA (HOW IT WORKS) === */
 
 .how-it-works {
-    background-color: #0d021d; /* Warna background disamakan dengan hero */
+    background-color: transparent;
     padding: 150px 20px;
     text-align: center;
     
@@ -233,7 +250,7 @@ body, html {
 }
 
 .step-card {
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: #0d021d;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 15px;
     padding: 40px;
@@ -276,7 +293,8 @@ body, html {
 /* === CSS UNTUK FOOTER === */
 
 .site-footer {
-    background-color: #080111; /* Warna lebih gelap dari background utama */
+    background-color: #080111; 
+    border-top: 2px solid #475569;
     color: #a9a9b3;
     padding-top: 60px;
     font-size: 0.9rem;
@@ -350,7 +368,7 @@ body, html {
 
 /* === KONTAINER UTAMA HALAMAN === */
 .page-container {
-    background-color: #0d021d;
+    background-color: transparent;
     color: #ffffff;
     padding: 90px 20px;
     min-height: 100vh;
@@ -360,7 +378,7 @@ body, html {
 .procedure-container {
     max-width: 900px;
     margin: 0 auto;
-    background-color: rgba(255, 255, 255, 0.05);
+    background-color: #0d021d;
     border: 1px solid rgba(255, 255, 255, 0.1);
     border-radius: 15px;
     padding: 40px;
@@ -613,15 +631,19 @@ body, html {
     color: #ffffff;
 }
 
+/* === CSS BARU KARTU STATUS (METODE FLEXBOX STABIL) === */
+
 .status-card {
     display: flex;
     align-items: center;
+    justify-content: space-between; /* Mendorong item ke ujung */
     padding: 20px;
     border-radius: 10px;
-    margin-top: 25PX;
+    margin-top: 25px;
     margin-bottom: 40px;
     border-left-width: 5px;
     border-left-style: solid;
+    min-height: 80px;
 }
 
 .status-icon {
@@ -631,12 +653,18 @@ body, html {
     align-items: center;
     justify-content: center;
     border-radius: 50%;
-    margin-right: 20px;
+    flex-shrink: 0; /* Penting: Mencegah ikon menyusut */
 }
 
 .status-icon svg {
     width: 28px;
     height: 28px;
+}
+
+.status-details {
+    flex-grow: 1; /* Ambil semua ruang kosong di tengah */
+    text-align: center;
+    padding: 0 15px; /* Beri sedikit jarak horizontal */
 }
 
 .status-details h4 {
@@ -648,6 +676,13 @@ body, html {
 .status-details p {
     margin: 0;
     color: #a9a9b3;
+    word-wrap: break-word; /* Memastikan teks panjang akan turun */
+}
+
+/* Spacer ini akan menyeimbangkan ikon di kiri */
+.status-spacer {
+    width: 50px; /* Lebarnya HARUS SAMA dengan .status-icon */
+    flex-shrink: 0; /* Mencegah spacer menyusut */
 }
 
 /* Variasi Warna Kartu Status */

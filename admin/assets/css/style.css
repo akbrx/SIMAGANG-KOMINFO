@@ -1,0 +1,443 @@
+/* ==========================================================================
+   1. FONT & RESET DASAR
+   - Mengimpor font Poppins dan mengatur style dasar untuk body.
+   ========================================================================== */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
+
+body {
+    margin: 0;
+    font-family: 'Poppins', sans-serif;
+    background-color: #f4f7fc;
+    color: #333;
+    overflow-x: hidden;
+}
+
+/* ==========================================================================
+   2. TATA LETAK UTAMA APLIKASI
+   - Mengatur pembungkus utama aplikasi dan layout khusus halaman login.
+   ========================================================================== */
+#app-wrapper {
+    display: flex;
+    transition: margin-left 0.3s ease;
+}
+
+/* --- Layout Khusus untuk Halaman Login --- */
+#app-wrapper.login-layout {
+    display: block; /* Mengganti 'flex' agar bisa full-page */
+}
+#app-wrapper.login-layout #sidebar,
+#app-wrapper.login-layout #main-content .sidebar-toggle {
+    display: none; /* Sembunyikan sidebar di halaman login */
+}
+#app-wrapper.login-layout #main-content {
+    margin-left: 0;
+    width: 100%;
+    padding: 0;
+    height: 100vh; /* Pastikan tinggi main-content 100% saat login */
+}
+#app-wrapper.login-layout .content-area {
+    height: 100%; /* Pastikan area konten juga 100% tinggi */
+}
+
+
+/* ==========================================================================
+   3. NAVBAR SAMPING (SIDEBAR)
+   - Mengatur semua elemen visual dan fungsional dari sidebar.
+   ========================================================================== */
+.sidebar {
+    width: 260px;
+    background: #ffffff;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.05);
+    transition: width 0.3s ease;
+    z-index: 1000;
+}
+.sidebar.collapsed {
+    width: 0;
+    overflow: hidden;
+}
+
+/* --- [PERUBAHAN] Komponen di Dalam Sidebar --- */
+.sidebar-header {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #e9ecef;
+}
+.sidebar-logo-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+.sidebar-logo-container img {
+    height: 40px;
+    width: auto;
+}
+.sidebar-header h3 {
+    margin: 0;
+    font-size: 1.5rem;
+    color: #2c5ae9;
+    font-weight: 700;
+}
+
+.sidebar-profile {
+    padding: 20px;
+    text-align: center;
+    border-bottom: 1px solid #e9ecef;
+}
+.profile-name {
+    font-weight: 600;
+    color: #343a40;
+}
+
+.sidebar-menu {
+    list-style: none;
+    padding: 15px 0;
+    margin: 0;
+    flex-grow: 1; /* Mendorong footer ke bawah */
+}
+.sidebar-menu li a {
+    display: flex;
+    align-items: center;
+    gap: 15px; /* Jarak antara ikon dan teks */
+    padding: 15px 25px;
+    margin: 5px 15px; /* Jarak antar menu item */
+    border-radius: 8px; /* Sudut melengkung */
+    color: #5a6a85;
+    text-decoration: none;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: background-color 0.2s, color 0.2s;
+    border-left: 3px solid transparent;
+}
+.sidebar-menu li a:hover {
+    background-color: #f0f4ff; /* Warna biru muda saat hover */
+    color: #2c5ae9;
+}
+.sidebar-menu li a.active {
+    background-color: #e6edff;
+    color: #2c5ae9;
+    font-weight: 600;
+    border-left-color: #2c5ae9;
+}
+
+.sidebar-footer {
+    padding: 20px;
+    border-top: 1px solid #e9ecef;
+}
+.btn-logout {
+    width: 100%;
+    padding: 12px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    background: #fdeeee;
+    color: #c82333;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+.btn-logout:hover {
+    background-color: #c82333;
+    color: #fff;
+}
+
+
+/* ==========================================================================
+   4. KONTEN UTAMA
+   - Mengatur area di sebelah kanan sidebar tempat halaman dinamis muncul.
+   ========================================================================== */
+.main-content {
+    margin-left: 260px;
+    width: calc(100% - 260px);
+    transition: margin-left 0.3s ease, width 0.3s ease;
+    padding: 25px;
+}
+.content-area {
+    width: 100%;
+}
+
+.sidebar-toggle {
+    display: none; /* Sembunyi di desktop, muncul di mobile */
+    font-size: 24px;
+    background: #fff;
+    border: 1px solid #ddd;
+    border-radius: 5px;
+    padding: 5px 10px;
+    margin-bottom: 15px;
+    cursor: pointer;
+}
+
+
+/* ==========================================================================
+   5. HALAMAN DASHBOARD
+   - Gaya spesifik untuk elemen-elemen di halaman dashboard.
+   ========================================================================== */
+.dashboard-title {
+    font-size: 2rem;
+    font-weight: 600;
+    margin-bottom: 5px;
+}
+.dashboard-subtitle {
+    font-size: 1rem;
+    color: #6c757d;
+    margin-top: 0;
+    margin-bottom: 30px;
+}
+
+/* --- Kartu Statistik --- */
+.stats-cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 25px;
+    margin-bottom: 30px;
+}
+.card {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+}
+.card-info {
+    margin-left: 15px;
+}
+.card-value {
+    font-size: 2rem;
+    font-weight: 600;
+    display: block;
+}
+.card-title {
+    color: #6c757d;
+}
+
+/* --- Grid untuk Kontainer Chart --- */
+.charts-grid {
+    display: flex; /* [PERBAIKAN] Menggunakan Flexbox agar lebih fleksibel */
+    gap: 25px;
+    width: 100%;
+}
+
+/* --- [PERUBAHAN] Kontainer Chart --- */
+.chart-container {
+    background: #ffffff;
+    padding: 25px;
+    border-radius: 8px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+    height: auto;
+    min-height: 450px;
+    display: flex;
+    flex-direction: column;
+    position: relative;
+    flex: 1 1 0; /* [BARU] Memastikan kedua kartu berbagi ruang secara merata */
+    min-width: 0; /* [BARU] Mencegah konten di dalam (chart) merusak layout */
+}
+
+.chart-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    flex-shrink: 0;
+}
+.chart-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #343a40;
+}
+.chart-filter select {
+    padding: 8px 12px;
+    border-radius: 6px;
+    border: 1px solid #ced4da;
+    background-color: #f8f9fa;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* ==========================================================================
+   6. HALAMAN LOGIN
+   - Gaya spesifik untuk halaman login, termasuk background dan kartu form.
+   ========================================================================== */
+.login-wrapper {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    height: 100%;
+    box-sizing: border-box;
+    background: linear-gradient(rgba(18, 41, 107, 0.6), rgba(18, 41, 107, 0.6)), url('../img/background-login.png');
+    background-size: cover;
+    background-position: center;
+    animation: fadeIn 0.7s ease-in-out;
+}
+@keyframes fadeIn {
+    from { opacity: 0; transform: scale(0.98); }
+    to { opacity: 1; transform: scale(1); }
+}
+
+/* --- Kartu Form Login (Efek Kaca) --- */
+.login-form-wrapper {
+    width: 100%;
+    max-width: 420px;
+    text-align: center;
+    padding: 40px;
+    border-radius: 16px;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.37);
+}
+.logo-header { 
+    display: flex; 
+    justify-content: center; 
+    align-items: center;
+    gap: 25px; 
+    margin-bottom: 25px; 
+}
+.logo-header img { 
+    height: 55px; 
+    width: auto;
+    object-fit: contain;
+}
+.login-form-wrapper h2 {
+    margin-bottom: 10px;
+    color: #ffffff;
+    font-size: 1.8rem;
+    font-weight: 600;
+}
+.login-info { 
+    color: #e0e0e0; 
+    font-size: 1rem;
+    margin-top: 0;
+    margin-bottom: 40px;
+}
+
+/* --- Input Form --- */
+.form-group { 
+    position: relative; 
+    margin-bottom: 30px; 
+}
+.form-group input { 
+    width: 100%; 
+    padding: 10px 0; 
+    font-size: 16px;
+    border: none; 
+    border-bottom: 2px solid rgba(255, 255, 255, 0.4); 
+    background: transparent; 
+    outline: none; 
+    color: #ffffff;
+}
+.form-group input:-webkit-autofill,
+.form-group input:-webkit-autofill:hover, 
+.form-group input:-webkit-autofill:focus, 
+.form-group input:-webkit-autofill:active  {
+    -webkit-box-shadow: 0 0 0 30px rgba(0,0,0,0) inset !important;
+    -webkit-text-fill-color: #fff !important;
+}
+.form-group label { 
+    position: absolute; 
+    top: 10px; 
+    left: 0; 
+    color: #d1d1d1;
+    pointer-events: none; 
+    transition: all 0.2s ease; 
+}
+.form-group input:focus + label, .form-group input:valid + label { 
+    top: -20px; 
+    font-size: 12px; 
+    color: #ffffff;
+}
+
+/* --- Link Lupa Password & Tombol Login --- */
+.forgot-password-container { 
+    text-align: right; 
+    margin-top: -15px; 
+    margin-bottom: 20px; 
+}
+.forgot-password-link {
+    color: #d1d1d1;
+    font-size: 14px;
+    text-decoration: none;
+    transition: color 0.3s;
+}
+.forgot-password-link:hover {
+    color: #ffffff;
+    text-decoration: underline;
+}
+.btn-login { 
+    width: 100%; 
+    padding: 14px; 
+    background: #2c5ae9; 
+    color: white; 
+    border: none; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-size: 16px;
+    font-weight: 500;
+    transition: background-color 0.3s, box-shadow 0.3s; 
+    margin-top: 20px;
+}
+.btn-login:hover { 
+    background-color: #1c3e91; 
+    box-shadow: 0 4px 15px rgba(44, 90, 233, 0.4);
+}
+.error-message { 
+    color: #ffcdd2; 
+    margin-top: 15px;
+    font-size: 14px;
+    text-align: left; 
+    display: none; 
+}
+
+
+/* ==========================================================================
+   7. DESAIN RESPONSIVE
+   - Mengatur ulang layout untuk layar yang lebih kecil (tablet & mobile).
+   ========================================================================== */
+@media (max-width: 992px) {
+    /* --- Sidebar di Layar Kecil --- */
+    .sidebar {
+        width: 0; /* Sembunyikan sidebar secara default */
+        overflow: hidden;
+    }
+    .sidebar.collapsed {
+        width: 260px; /* Tampilkan sidebar saat ditoggle */
+    }
+
+    /* --- Konten Utama di Layar Kecil --- */
+    .main-content {
+        margin-left: 0;
+        width: 100%;
+    }
+    .main-content.expanded {
+        margin-left: 0; 
+    }
+    .sidebar-toggle {
+        display: block; /* Tampilkan tombol toggle hamburger */
+    }
+
+    /* --- Chart di Layar Kecil --- */
+    .charts-grid {
+        grid-template-columns: 1fr; /* Buat chart menjadi satu kolom */
+    }
+}
+
+@media (max-width: 500px) {
+    /* --- Form Login di Layar Sangat Kecil --- */
+    .login-form-wrapper {
+        padding: 30px;
+    }
+}
+

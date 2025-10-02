@@ -19,7 +19,8 @@ export class TrackingView {
                     </div>
                 </form>
                 <div id="tracking-result" class="tracking-result-container">
-                    </div>
+                
+                </div>
             </div>
         </div>
     `;
@@ -57,6 +58,7 @@ export class TrackingView {
                 <h4>${status}</h4>
                 <p>${catatan}</p>
             </div>
+            <div class="status-spacer"></div>
         </div>
     `;
 

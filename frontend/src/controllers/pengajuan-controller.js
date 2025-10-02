@@ -1,10 +1,10 @@
-// /src/controllers/pengajuan-controller.js
-
 import { PengajuanView } from '../views/pengajuan-view.js';
+import { PengajuanModel } from '../models/pengajuan-model.js';
 
 export class PengajuanController {
     constructor() {
         this.view = new PengajuanView();
+        this.model = new PengajuanModel();  
     }
 
     showPengajuanPage() {
@@ -36,22 +36,34 @@ export class PengajuanController {
         });
 
         // Handler saat form disubmit
-        form.addEventListener('submit', (event) => {
-            event.preventDefault(); // Mencegah reload halaman
+        form.addEventListener('submit', async (event) => {
+            event.preventDefault();
             
-            // Mengambil semua data dari form, termasuk file
             const formData = new FormData(form);
+            const submitButton = form.querySelector('button[type="submit"]');
             
-            // Untuk sekarang, kita tampilkan di console.
-            // Nantinya, data ini akan dikirim ke backend.
-            console.log('Data yang akan dikirim:');
-            for (let [key, value] of formData.entries()) {
-                console.log(`${key}:`, value);
+            // Tampilkan status loading
+            submitButton.disabled = true;
+            submitButton.textContent = 'Mengirim...';
+
+            try {
+                // Panggil method 'kirim' dari model
+                const result = await this.model.kirim(formData);
+                
+                // Tampilkan pesan sukses dengan ID Pelacakan
+                alert(`Pengajuan berhasil!\nID Pelacakan Anda: ${result.data.tracking_id}\nHarap simpan ID ini.`);
+                
+                modal.style.display = 'none';
+                form.reset();
+
+            } catch (error) {
+                // Tampilkan pesan error jika gagal
+                alert(`Gagal mengirim pengajuan:\n${error.message}`);
+            } finally {
+                // Kembalikan tombol ke kondisi semula
+                submitButton.disabled = false;
+                submitButton.textContent = 'Kirim Pengajuan';
             }
-            
-            alert('Pengajuan berhasil dikirim! (Cek console untuk melihat data)');
-            modal.style.display = 'none'; // Tutup modal setelah submit
-            form.reset(); // Kosongkan form
         });
     }
 }
