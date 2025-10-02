@@ -1,6 +1,6 @@
 export class PengajuanModel {
     constructor() {
-        this.apiUrl = 'http://127.0.0.1:8000/api/submission';
+        this.apiUrl = 'http://127.0.0.1:8000/api/pengajuan';
     }
 
     /**

@@ -51,7 +51,7 @@ export class PengajuanController {
                 const result = await this.model.kirim(formData);
                 
                 // Tampilkan pesan sukses dengan ID Pelacakan
-                alert(`Pengajuan berhasil!\nID Pelacakan Anda: ${result.data.tracking_id}\nHarap simpan ID ini.`);
+                alert(`Pengajuan berhasil!\nID Pelacakan Anda: ${result.unique_token}\nHarap simpan ID ini.`);
                 
                 modal.style.display = 'none';
                 form.reset();

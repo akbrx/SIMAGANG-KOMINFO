@@ -59,7 +59,11 @@ export class PengajuanView {
                         </div>
                         <div class="form-group">
                             <label for="instansi">Instansi Asal (Universitas/Sekolah)</label>
-                            <input type="text" id="instansi" name="instansi" required>
+                            <input type="text" id="instansi" name="asal_sekolah" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jurusan">Jurusan</label>
+                            <input type="text" id="jurusan" name="jurusan" required>
                         </div>
                         <div class="form-group">
                             <label for="email">Alamat Email Aktif</label>
@@ -67,15 +71,15 @@ export class PengajuanView {
                         </div>
                         <div class="form-group">
                             <label for="no_hp">No. Handphone (WhatsApp)</label>
-                            <input type="tel" id="no_hp" name="no_hp" required>
+                            <input type="tel" id="no_hp" name="nomor_telepon" required>
                         </div>
                         <div class="form-group">
                             <label for="durasi">Lama Magang (Contoh: 3 bulan)</label>
-                            <input type="text" id="durasi" name="durasi" required>
+                            <input type="text" id="durasi" name="durasi_magang" required>
                         </div>
                         <div class="form-group">
                             <label for="surat">Upload Surat Permohonan (PDF)</label>
-                            <input type="file" id="surat" name="surat" accept=".pdf" required>
+                            <input type="file" id="surat" name="submission_file" accept=".pdf" required>
                         </div>
                         <button type="submit" class="btn btn-primary">Kirim Pengajuan</button>
                     </form>

@@ -15,6 +15,7 @@ class Submission extends Model
     protected $fillable = [
         'student_id',
         'unique_token', 
+        'submission_hash',
         'durasi_magang',
         'submission_file',
         'status',

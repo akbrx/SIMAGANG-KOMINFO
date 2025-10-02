@@ -16,7 +16,7 @@ use App\Models\Submission as SubmissionModel;
 class AdminSubmissionController extends Controller
 {
     // Daftar status yang valid (untuk validasi)
-    private $validStatuses = ['pending', 'diproses', 'diterima', 'ditolak'];
+    private $validStatuses = ['DIAJUKAN', 'DISPOSISI', 'DITERIMA', 'DITOLAK'];
 
     /**
      * [Endpoint GET /api/admin/submissions]
@@ -43,7 +43,7 @@ class AdminSubmissionController extends Controller
     {
         // 1. Validasi Input
         $validator = Validator::make($request->all(), [
-            'status' => 'required|string|in:pending,diproses,diterima,ditolak',
+            'status' => 'required|string|in:DIAJUKAN,DISPOSISI,DITERIMA,DITOLAK',
             'admin_notes' => 'nullable|string|max:1000',
         ]);
 

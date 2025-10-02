@@ -10,6 +10,7 @@ use Illuminate\Support\Facades\Storage;
 use App\Models\Student;
 use App\Models\Submission;
 use Exception;
+use Illuminate\Support\Facades\Log;
 use Illuminate\Support\Facades\DB;
 
 class StudentSubmissionController extends Controller
@@ -34,54 +35,77 @@ class StudentSubmissionController extends Controller
      */
     public function store(Request $request)
     {
-        // 1. VALIDASI DATA MASUKAN
+        // 1. VALIDASI DATA MASUKAN (Tetap sama)
         $validator = Validator::make($request->all(), [
             'nama' => 'required|string|max:255',
             'jurusan' => 'nullable|string|max:255',
             'nomor_telepon' => 'nullable|string|max:15',
-            'email' => 'required|email|max:255', 
+            'email' => 'required|email|max:255',
             'asal_sekolah' => 'nullable|string|max:255',
             'durasi_magang' => 'required|string|max:100',
-            'submission_file' => 'required|file|mimes:pdf,doc,docx|max:5120', // Maks 5MB
+            'submission_file' => 'required|file|mimes:pdf,doc,docx|max:5120',
         ], [
-            // Pesan Error dalam Bahasa Indonesia
             'submission_file.required' => 'File surat pengajuan magang wajib diunggah.',
-            // ... pesan error lain sesuai kebutuhan
         ]);
 
         if ($validator->fails()) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Validasi gagal',
-                'errors' => $validator->errors(),
-            ], 422);
+            return response()->json(['success' => false, 'message' => 'Validasi gagal', 'errors' => $validator->errors()], 422);
         }
 
-        try {
-            // 2. SELALU BUAT RECORD STUDENT BARU UNTUK SETIAP PENGAJUAN
-            // Ini memungkinkan mahasiswa mengajukan ulang jika token lama hilang.
-            $student = Student::create(
-                $request->only(['nama', 'jurusan', 'nomor_telepon', 'email', 'asal_sekolah'])
-            );
-            
-            // 3. FILE UPLOAD
-            $file = $request->file('submission_file');
-            // Simpan file ke folder 'public/submissions'
-            $filePath = $file->store('submissions', 'public'); 
+        // PERUBAHAN DIMULAI DARI SINI
+        DB::beginTransaction(); // Memulai transaksi database
 
-            // 4. GENERATE TOKEN UNIK
+        try {
+            // 2. CARI ATAU BUAT RECORD STUDENT (LEBIH EFISIEN)
+            // Menggunakan email sebagai kunci unik untuk menghindari duplikasi data student.
+            $student = Student::updateOrCreate(
+                ['email' => $request->email], // Kondisi pencarian
+                $request->only(['nama', 'jurusan', 'nomor_telepon', 'asal_sekolah']) // Data untuk update atau create
+            );
+
+            // 3. BUAT HASH UNTUK PENGECEKAN DUPLIKASI
+            $fileContent = file_get_contents($request->file('submission_file')->getRealPath());
+            
+            // Gabungkan semua data relevan menjadi satu string. Urutan harus konsisten!
+            $dataToHash = trim($request->input('nama')) . '|' .
+              trim($request->input('email')) . '|' .
+              trim($request->input('jurusan')) . '|' .
+              trim($request->input('asal_sekolah')) . '|' .
+              trim($request->input('nomor_telepon')) . '|' .
+              trim($request->input('durasi_magang')) . '|' .
+              $fileContent;
+            $submissionHash = hash('sha256', $dataToHash);
+            // Coba cari submission terakhir dari student ini untuk perbandingan
+
+            // 4. CEK APAKAH HASH SUDAH ADA
+            $existingSubmission = Submission::where('submission_hash', $submissionHash)->first();
+
+            if ($existingSubmission) {
+                // JIKA SUDAH ADA, kembalikan token yang lama tanpa membuat data baru
+                DB::rollBack(); // Batalkan transaksi karena tidak ada data baru yang dibuat
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Pengajuan dengan data identik sudah pernah ada. Berikut adalah token lacak Anda.',
+                    'unique_token' => $existingSubmission->unique_token,
+                ]);
+            }
+
+            // 5. JIKA HASH BELUM ADA, LANJUTKAN PROSES SEPERTI BIASA
+            $file = $request->file('submission_file');
+            $filePath = $file->store('submissions', 'public');
+
             $uniqueToken = $this->generateUniqueToken();
 
-            // 5. SIMPAN SUBMISSION BARU
-            $submission = Submission::create([
+            Submission::create([
                 'student_id' => $student->id,
                 'unique_token' => $uniqueToken,
+                'submission_hash' => $submissionHash, // <-- SIMPAN HASH DI SINI
                 'durasi_magang' => $request->durasi_magang,
-                'submission_file' => $filePath, // Simpan path file
-                'status' => 'pending', // Default status
-            
+                'submission_file' => $filePath,
+                'status' => 'DIAJUKAN', // Status awal
             ]);
-            DB::commit();
+
+            DB::commit(); // Konfirmasi semua perubahan di database
 
             // 6. RESPONSE SUKSES
             return response()->json([
@@ -91,18 +115,16 @@ class StudentSubmissionController extends Controller
             ], 201);
 
         } catch (Exception $e) {
-            DB::rollBack(); // Jika ada error, batalkan semua perubahan di database
-                // Tambahkan logika untuk menghapus file yang mungkin sudah terlanjur terupload
+            DB::rollBack();
             if (isset($filePath)) {
                 Storage::disk('public')->delete($filePath);
             }
-            // Error handling jika ada masalah server
-            return response()->json([
-                'success' => false,
-                'message' => 'Terjadi kesalahan saat memproses pengajuan: ' . $e->getMessage(),
-            ], 500);
-        }
+            
+            // Log error untuk debugging
+            Log::error('Error saat submission: ' . $e->getMessage());
 
+            return response()->json(['success' => false, 'message' => 'Terjadi kesalahan pada server.'], 500);
+        }
     }
 
     /**
