@@ -18,7 +18,7 @@ export const render = () => {
                 <p class="login-info">Selamat Datang Kembali Admin</p>
                 <form id="login-form">
                     <div class="form-group">
-                        <input type="text" id="username" name="username" required>
+                        <input type="text" id="username" name="username" required autocomplete="off">
                         <label for="username">Username</label>
                     </div>
                     <div class="form-group">
