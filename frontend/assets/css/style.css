@@ -791,3 +791,50 @@ body {
     justify-content: center;
     gap: 20px;
 }
+
+/* === CSS DETAIL PENGAJUAN (DI HALAMAN LACAK) === */
+
+.submission-details {
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 30px; /* Jarak ke kartu status */
+    text-align: left;
+}
+
+.submission-details h3 {
+    margin-top: 0;
+    margin-bottom: 25px;
+    font-size: 1.5rem;
+    color: #ffffff;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+    padding-bottom: 15px;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr; /* Layout 2 kolom */
+    gap: 20px;
+}
+
+.detail-item .detail-label {
+    display: block;
+    font-size: 0.9rem;
+    color: #a9a9b3;
+    margin-bottom: 5px;
+}
+
+.detail-item .detail-value {
+    display: block;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #ffffff;
+}
+
+/* Penyesuaian untuk layar mobile */
+@media (max-width: 600px) {
+    .detail-grid {
+        grid-template-columns: 1fr; /* Ubah jadi 1 kolom di mobile */
+    }
+}

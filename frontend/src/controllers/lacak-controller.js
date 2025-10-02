@@ -35,6 +35,7 @@ export class LacakController {
         try {
             // Panggil model untuk mengambil data dari API backend
             const result = await this.model.getStatus(id);
+            console.log('Data lengkap dari backend:', result);
             
             // Tampilkan hasilnya menggunakan view.
             // Asumsi backend mengembalikan data di dalam properti 'data'
