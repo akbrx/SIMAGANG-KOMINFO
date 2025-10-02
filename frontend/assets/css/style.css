@@ -2,6 +2,9 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
+
+    scrollbar-width: none;  
+    -ms-overflow-style: none;
 }
 
 body {
@@ -364,8 +367,6 @@ body {
     border-top: 1px solid rgba(255, 255, 255, 0.1);
 }
 
-/* === CSS HALAMAN PENGAJUAN & MODAL === */
-
 /* === KONTAINER UTAMA HALAMAN === */
 .page-container {
     background-color: transparent;
@@ -468,17 +469,20 @@ body {
 
 /* === MODAL & FORMULIR === */
 .modal-overlay {
-    display: none; /* Awalnya tersembunyi */
+    display: none;
     position: fixed;
     z-index: 1000;
     left: 0;
     top: 0;
     width: 100%;
     height: 100%;
-    overflow: auto;
+    overflow: auto; /* Memungkinkan scroll jika layar sangat kecil */
     background-color: rgba(0, 0, 0, 0.7);
     justify-content: center;
     align-items: center;
+    padding: 40px 0; 
+    scrollbar-width: none;  
+    -ms-overflow-style: none;
 }
 
 .modal-content {
@@ -490,6 +494,8 @@ body {
     max-width: 500px;
     position: relative;
     animation: slide-down 0.5s ease;
+    max-height: 90vh;  /* Batasi tinggi maksimal 90% dari tinggi layar */
+    overflow-y: auto;  /* Tambahkan scrollbar jika konten lebih tinggi dari max-height */
 }
 
 @keyframes slide-down {
@@ -504,8 +510,8 @@ body {
 }
 
 .modal-close {
-    position: absolute;
-    top: 15px;
+    position: sticky;
+    top: 0;
     right: 15px;
     color: #aaa;
     font-size: 28px;
@@ -546,6 +552,21 @@ body {
 /* Gaya untuk Tombol (bisa juga global) */
 #btn-open-modal {
     margin-top: 20px;
+}
+
+/* Gaya untuk scrollbar agar sesuai tema */
+.modal-content::-webkit-scrollbar {
+  width: 8px;
+}
+.modal-content::-webkit-scrollbar-track {
+  background: #334155;
+}
+.modal-content::-webkit-scrollbar-thumb {
+  background: #64748b;
+  border-radius: 4px;
+}
+.modal-content::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
 }
 
 
@@ -715,4 +736,58 @@ body {
 .timeline-item.active-rejected .timeline-content h4 {
     color: #ff6b6b;
     font-weight: 700;
+}
+
+/* === CSS HALAMAN SUKSES PENGAJUAN === */
+
+.success-container {
+    max-width: 700px;
+    margin: 0 auto;
+    text-align: center;
+    background-color: rgba(255, 255, 255, 0.05);
+    border: 1px solid rgba(46, 213, 115, 0.3);
+    border-radius: 15px;
+    padding: 50px 40px;
+}
+
+.success-icon {
+    width: 70px;
+    height: 70px;
+    background-color: #2ed573;
+    color: #ffffff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0 auto 30px auto;
+}
+
+.success-container h1 {
+    font-size: 2.2rem;
+    color: #2ed573;
+    margin-bottom: 20px;
+}
+
+.success-container p {
+    color: #a9a9b3;
+    margin-bottom: 30px;
+}
+
+.tracking-id-display {
+    background-color: rgba(0, 0, 0, 0.3);
+    border: 1px dashed #475569;
+    padding: 15px;
+    font-family: 'Roboto Mono', monospace;
+    font-size: 1.5rem;
+    font-weight: 700;
+    color: #ffffff;
+    letter-spacing: 2px;
+    border-radius: 8px;
+    margin-bottom: 40px;
+}
+
+.success-actions {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
 }

@@ -1,4 +1,4 @@
-export class TrackingView {
+export class LacakView {
     constructor() {
         this.app = document.getElementById('app');
     }
@@ -29,23 +29,40 @@ export class TrackingView {
     // Fungsi untuk menampilkan hasil status
     displayStatus(statusData) {
     const resultContainer = document.getElementById('tracking-result');
-    const { id, status, catatan, logs } = statusData;
+    const { id, status, catatan, logs = [] } = statusData;
 
     let statusCardHTML = '';
     let statusClass = '';
     let statusIcon = '';
+    let displayText = status;
+    let displayMessage = '';
 
-    // 1. Tentukan tampilan Kartu Status berdasarkan status akhir
     switch (status) {
+        case 'Diajukan':
+            statusClass = 'status-proses';
+            statusIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path></svg>`;
+            displayText = 'Sedang Diproses';
+            displayMessage = 'Surat Anda telah kami terima dan sedang dalam antrian.';
+            break;
+        case 'Disposisi':
+            statusClass = 'status-proses';
+            statusIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path></svg>`;
+            displayText = 'Sedang Ditinjau';
+            displayMessage = 'Surat Anda sedang dalam proses peninjauan oleh pimpinan.';
+            break;
         case 'Diterima':
             statusClass = 'status-diterima';
             statusIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>`;
+            displayText = 'Diterima';
+            displayMessage = 'Selamat! Surat balasan telah dikirim ke email Anda.';
             break;
         case 'Ditolak':
             statusClass = 'status-ditolak';
             statusIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>`;
+            displayText = 'Ditolak';
+            displayMessage = 'Mohon maaf, pengajuan Anda belum dapat kami proses.';
             break;
-        default: // Untuk 'Diverifikasi' atau 'Diajukan'
+        default:
             statusClass = 'status-proses';
             statusIcon = `<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 8v4l3 3m6-3a9 9 0 1 1-18 0 9 9 0 0 1 18 0z"></path></svg>`;
             break;
@@ -55,21 +72,21 @@ export class TrackingView {
         <div class="status-card ${statusClass}">
             <div class="status-icon">${statusIcon}</div>
             <div class="status-details">
-                <h4>${status}</h4>
-                <p>${catatan}</p>
+                <h4>${displayText}</h4>
+                <p>${catatan || displayMessage}</p>
             </div>
             <div class="status-spacer"></div>
         </div>
     `;
 
-    // 2. Buat Timeline Proses
     const steps = ['Diajukan', 'Diverifikasi', 'Diterima'];
-    // Jika ditolak, timeline hanya sampai 'Diverifikasi'
+    
+    // DEKLARASI YANG HILANG SEBELUMNYA. INI PERBAIKANNYA.
+    let timelineHTML = `<div class="status-timeline">`;
+    
     const finalStepIndex = logs.length - 1;
 
-    let timelineHTML = `<div class="status-timeline">`;
     steps.forEach((step, index) => {
-        // Jangan tampilkan step 'Diterima' jika statusnya 'Ditolak'
         if (status === 'Ditolak' && step === 'Diterima') return;
 
         let statusClass = '';
@@ -94,7 +111,6 @@ export class TrackingView {
     });
     timelineHTML += '</div>';
 
-    // 3. Gabungkan dan tampilkan hasilnya
     resultContainer.innerHTML = statusCardHTML + timelineHTML;
     resultContainer.style.display = 'block';
 }

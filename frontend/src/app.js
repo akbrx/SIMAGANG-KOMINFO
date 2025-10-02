@@ -1,17 +1,44 @@
+// /src/app.js
+
 import { HomeController } from './controllers/home-controller.js';
 import { PengajuanController } from './controllers/pengajuan-controller.js';
+import { LacakController } from './controllers/lacak-controller.js';
 
-class App {
+export class App {
     constructor() {
-        this.homeController = new HomeController(this); // Beri 'this' agar bisa panggil App
+        // Controller tidak perlu lagi diberi 'this'
+        this.homeController = new HomeController();
         this.pengajuanController = new PengajuanController();
+        this.lacakController = new LacakController();
 
-        this.setupEventListeners();
-        this.homeController.showHomePage(); // Tampilkan halaman home saat pertama kali buka
+        this.setupNavigationListener(); // Panggil listener utama
+        this.setupGlobalNavLinks();     // Panggil listener untuk navbar global
+        
+        this.navigateToHome(); // Tampilkan halaman home saat pertama kali buka
     }
 
-    setupEventListeners() {
-        // --- Navigasi Global Navbar ---
+    // Listener untuk navigasi antar "halaman"
+    setupNavigationListener() {
+        document.addEventListener('navigate', (event) => {
+            const page = event.detail.page;
+            const id = event.detail.id;
+
+            switch (page) {
+                case 'home':
+                    this.navigateToHome();
+                    break;
+                case 'lacak':
+                    this.navigateToLacak(id);
+                    break;
+                case 'pengajuan':
+                    this.navigateToPengajuan();
+                    break;
+            }
+        });
+    }
+
+    // Listener untuk link di navbar yang bersifat global
+    setupGlobalNavLinks() {
         const navLinks = {
             'nav-home': '#home-section',
             'nav-about': '#about-section',
@@ -23,27 +50,39 @@ class App {
             if (link) {
                 link.addEventListener('click', (event) => {
                     event.preventDefault();
-                    // 1. Selalu tampilkan halaman home dulu
-                    this.homeController.showHomePage();
-                    // 2. Tunggu sesaat agar konten home sempat dirender
-                    setTimeout(() => {
-                        // 3. Scroll ke bagian yang dituju
-                        document.querySelector(targetId).scrollIntoView({
-                            behavior: 'smooth'
-                        });
-                    }, 100); // delay kecil
+                    this.navigateToHomeAndScroll(targetId);
                 });
             }
         }
     }
 
-    // Fungsi ini akan dipanggil dari HomeController
+    // --- FUNGSI NAVIGASI ---
+    navigateToHome() {
+        this.homeController.showHomePage();
+    }
+
+    // Fungsi baru untuk klik navbar: tampilkan home, lalu scroll
+    navigateToHomeAndScroll(targetId) {
+        this.navigateToHome();
+        setTimeout(() => {
+            const element = document.querySelector(targetId);
+            if(element) {
+                element.scrollIntoView({ behavior: 'smooth' });
+            }
+        }, 100);
+    }
+
     navigateToPengajuan() {
         this.pengajuanController.showPengajuanPage();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    }
+
+    navigateToLacak(trackingId = null) {
+        this.lacakController.showLacakPage(trackingId);
+        window.scrollTo({ top: 0, behavior: 'smooth' });
     }
 }
 
-// Jalankan aplikasi saat halaman dimuat
 document.addEventListener('DOMContentLoaded', () => {
     new App();
 });

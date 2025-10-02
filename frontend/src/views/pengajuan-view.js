@@ -59,7 +59,11 @@ export class PengajuanView {
                         </div>
                         <div class="form-group">
                             <label for="instansi">Instansi Asal (Universitas/Sekolah)</label>
-                            <input type="text" id="instansi" name="instansi" required>
+                            <input type="text" id="instansi" name="asal_sekolah" required>
+                        </div>
+                        <div class="form-group">
+                            <label for="jurusan">Jurusan</label>
+                            <input type="text" id="jurusan" name="jurusan" required>
                         </div>
                         <div class="form-group">
                             <label for="email">Alamat Email Aktif</label>
@@ -67,18 +71,34 @@ export class PengajuanView {
                         </div>
                         <div class="form-group">
                             <label for="no_hp">No. Handphone (WhatsApp)</label>
-                            <input type="tel" id="no_hp" name="no_hp" required>
+                            <input type="tel" id="no_hp" name="nomor_telepon" required>
                         </div>
                         <div class="form-group">
                             <label for="durasi">Lama Magang (Contoh: 3 bulan)</label>
-                            <input type="text" id="durasi" name="durasi" required>
-                        </div>
+                            <input type="text" id="durasi" name="durasi_magang" required> </div>
                         <div class="form-group">
                             <label for="surat">Upload Surat Permohonan (PDF)</label>
-                            <input type="file" id="surat" name="surat" accept=".pdf" required>
-                        </div>
+                            <input type="file" id="surat" name="submission_file" accept=".pdf" required> </div>
                         <button type="submit" class="btn btn-primary">Kirim Pengajuan</button>
                     </form>
+                </div>
+            </div>
+        `;
+    }
+    renderSuccess(trackingId) {
+        this.app.innerHTML = `
+            <div class="page-container">
+                <div class="success-container">
+                    <div class="success-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                    </div>
+                    <h1>Pengajuan Berhasil Terkirim!</h1>
+                    <p>Terima kasih telah mengajukan permohonan magang. Harap simpan ID Pelacakan unik Anda di bawah ini untuk memantau status surat Anda.</p>
+                    <div class="tracking-id-display">${trackingId}</div>
+                    <div class="success-actions">
+                        <button id="btn-track-now" class="btn btn-primary">Lacak Status Sekarang</button>
+                        <button id="btn-submit-another" class="btn btn-secondary">Ajukan Surat Lain</button>
+                    </div>
                 </div>
             </div>
         `;
