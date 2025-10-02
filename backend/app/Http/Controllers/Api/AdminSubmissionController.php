@@ -9,6 +9,7 @@ use Illuminate\Support\Facades\Validator;
 use Exception;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Storage;
+use App\Http\Resources\SubmissionResource;
 use App\Models\Submission as SubmissionModel;
 
 
@@ -57,7 +58,7 @@ class AdminSubmissionController extends Controller
         $submission = Submission::find($id);
         if (!$submission) {
             return response()->json(['success' => false, 'message' => 'Data pengajuan tidak ditemukan.'], 404);
-        }
+        }   
 
         // 4. --- LOGIKA HYBRID ---
         
@@ -81,7 +82,7 @@ class AdminSubmissionController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Status pengajuan berhasil diperbarui.',
-            'data' => $submission,
+            'data' => new SubmissionResource($submission),
         ]);
     }
     public function downloadFile(Request $request, $id)
