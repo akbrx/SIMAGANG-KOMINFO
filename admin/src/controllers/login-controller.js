@@ -1,3 +1,5 @@
+// This is the main logic file for the login page.
+
 export const init = () => {
     const loginForm = document.getElementById('login-form');
     // [PERUBAHAN] Mengganti 'username' menjadi 'email'
@@ -22,7 +24,7 @@ export const init = () => {
         const password = passwordInput.value;
 
         // --- GANTI URL INI dengan URL Endpoint Login Anda ---
-        const apiEndpoint = 'http://localhost:3000/api/admin/login'; // Contoh URL
+        const apiEndpoint = 'http://localhost:8000/api/admin/login'; // Contoh URL
 
         try {
             // --- 2. Mengirim Data ke Backend ---
@@ -73,3 +75,4 @@ export const init = () => {
         });
     }
 };
+
