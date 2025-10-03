@@ -1,37 +1,70 @@
-// Nama fungsi diubah dari 'initialize' menjadi 'init' agar cocok dengan app.js
 export const init = () => {
     const loginForm = document.getElementById('login-form');
-    const usernameInput = document.getElementById('username');
+    // [PERUBAHAN] Mengganti 'username' menjadi 'email'
+    const emailInput = document.getElementById('email');
     const passwordInput = document.getElementById('password');
     const errorMessage = document.getElementById('error-message');
+    const loginButton = document.querySelector('.btn-login');
 
-    if (!loginForm) return; // Pastikan form ada sebelum menambahkan event listener
+    if (!loginForm || !loginButton) return;
 
-    loginForm.addEventListener('submit', (event) => {
-        // Mencegah form dari 'refresh' halaman
+    // --- Menggunakan 'async' untuk menangani permintaan jaringan (fetch) ---
+    loginForm.addEventListener('submit', async (event) => {
         event.preventDefault();
 
-        const username = usernameInput.value;
+        // --- 1. Mengatur UI untuk Status Loading ---
+        loginButton.disabled = true;
+        loginButton.classList.add('loading');
+        errorMessage.style.display = 'none';
+
+        // [PERUBAHAN] Mengambil nilai dari input email
+        const email = emailInput.value;
         const password = passwordInput.value;
 
-        // --- Simulasi Logika Model ---
-        // Di aplikasi nyata, Anda akan mengirim data ini ke server/API
-        // menggunakan fetch() untuk validasi.
-        if (username === 'admin' && password === '1') {
-            console.log('Login berhasil!');
-            if (errorMessage) errorMessage.style.display = 'none';
-            
-            // Arahkan ke halaman dashboard
-            window.location.hash = '#dashboard';
+        // --- GANTI URL INI dengan URL Endpoint Login Anda ---
+        const apiEndpoint = 'http://localhost:3000/api/admin/login'; // Contoh URL
 
-        } else {
-            // Tampilkan pesan error di halaman, bukan dengan alert
-            errorMessage.textContent = 'Username atau password salah.';
+        try {
+            // --- 2. Mengirim Data ke Backend ---
+            const response = await fetch(apiEndpoint, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                // [PERUBAHAN] Mengirim 'email' dan 'password' di body
+                body: JSON.stringify({ email, password }),
+            });
+
+            const data = await response.json();
+
+            // --- 3. Memeriksa Respons dari Backend ---
+            if (response.ok) { // Status HTTP 200-299
+                console.log('Login berhasil!', data);
+                
+                // Simpan token ke localStorage untuk sesi login
+                localStorage.setItem('authToken', data.token);
+
+                // Arahkan ke halaman dashboard
+                window.location.hash = '#dashboard';
+            } else {
+                // Tampilkan pesan error dari backend (misal: "Password salah")
+                errorMessage.textContent = data.message || 'Terjadi kesalahan saat login.';
+                errorMessage.style.display = 'block';
+            }
+        } catch (error) {
+            // --- 4. Menangani Error Jaringan ---
+            console.error('Error jaringan:', error);
+            errorMessage.textContent = 'Tidak dapat terhubung ke server. Periksa koneksi Anda.';
             errorMessage.style.display = 'block';
-            console.error('Login gagal');
+        } finally {
+            // --- 5. Mengembalikan UI ke Status Normal ---
+            // 'finally' akan selalu berjalan, baik login berhasil maupun gagal
+            loginButton.disabled = false;
+            loginButton.classList.remove('loading');
         }
     });
-    
+
+    // Event listener untuk Lupa Password (tidak berubah)
     const forgotPasswordLink = document.getElementById('forgot-password');
     if(forgotPasswordLink) {
         forgotPasswordLink.addEventListener('click', (e) => {
