@@ -85,22 +85,24 @@ export class PengajuanView {
             </div>
         `;
     }
-    renderSuccess(trackingId) {
-        this.app.innerHTML = `
-            <div class="page-container">
-                <div class="success-container">
-                    <div class="success-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
-                    </div>
-                    <h1>Pengajuan Berhasil Terkirim!</h1>
-                    <p>Terima kasih telah mengajukan permohonan magang. Harap simpan ID Pelacakan unik Anda di bawah ini untuk memantau status surat Anda.</p>
-                    <div class="tracking-id-display">${trackingId}</div>
-                    <div class="success-actions">
-                        <button id="btn-track-now" class="btn btn-primary">Lacak Status Sekarang</button>
-                        <button id="btn-submit-another" class="btn btn-secondary">Ajukan Surat Lain</button>
-                    </div>
+    renderSuccess(trackingId, message) { 
+    this.app.innerHTML = `
+        <div class="page-container">
+            <div class="success-container">
+                <div class="success-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path><polyline points="22 4 12 14.01 9 11.01"></polyline></svg>
+                </div>
+                <h1>Informasi Pengajuan</h1>
+                
+                <p>${message}</p>
+                
+                <div class="tracking-id-display">${trackingId}</div>
+                <div class="success-actions">
+                    <button id="btn-track-now" class="btn btn-primary">Lacak Status Sekarang</button>
+                    <button id="btn-go-home" class="btn btn-secondary">Kembali ke Home</button>
                 </div>
             </div>
-        `;
-    }
+        </div>
+    `;
+}
 }

@@ -1,12 +1,8 @@
-// /src/controllers/pengajuan-controller.js
-
 import { PengajuanView } from '../views/pengajuan-view.js';
 import { PengajuanModel } from '../models/pengajuan-model.js';
-import { App } from '../app.js'; // Impor App untuk navigasi
 
 export class PengajuanController {
     constructor(app) {
-        this.app = app; // Simpan instance App
         this.view = new PengajuanView();
         this.model = new PengajuanModel();
     }
@@ -17,7 +13,6 @@ export class PengajuanController {
     }
 
     setupEventListeners() {
-        // ... (kode untuk buka/tutup modal tetap sama) ...
         const modal = document.getElementById('pengajuan-modal');
         const openModalBtn = document.getElementById('btn-open-modal');
         const closeModalBtn = document.getElementById('btn-close-modal');
@@ -38,13 +33,11 @@ export class PengajuanController {
 
             try {
                 const result = await this.model.kirim(formData);
-                // Anda bisa menghapus console.log ini jika sudah tidak diperlukan
-                console.log('Respons asli dari backend:', result);
 
-                // PERBAIKANNYA DI SINI: Ambil 'unique_token' dari 'result'
+                // Ambil token DAN pesan dari respons backend
                 const trackingId = result.unique_token;
+                const message = result.message; // <-- TAMBAHKAN BARIS INI
 
-                // Pengaman jika karena suatu hal token tidak ada
                 if (!trackingId) {
                     throw new Error('Respons dari server tidak menyertakan token pelacakan.');
                 }
@@ -52,7 +45,8 @@ export class PengajuanController {
                 modal.style.display = 'none';
                 form.reset();
 
-                this.view.renderSuccess(trackingId);
+                // Teruskan 'message' ke fungsi renderSuccess
+                this.view.renderSuccess(trackingId, message); // <-- UBAH BARIS INI
                 this.setupSuccessPageListeners(trackingId);
 
             } catch (error) {
@@ -60,20 +54,29 @@ export class PengajuanController {
             } finally {
                 submitButton.disabled = false;
                 submitButton.textContent = 'Kirim Pengajuan';
-            }
+            }   
         });
     }
 
     // FUNGSI BARU UNTUK HALAMAN SUKSES
     setupSuccessPageListeners(trackingId) {
         document.getElementById('btn-track-now').addEventListener('click', () => {
-            // Panggil fungsi navigasi dari App
-            this.app.navigateToTracking(trackingId);
+            // Mengirim pesan untuk navigasi ke halaman lacak
+            document.dispatchEvent(new CustomEvent('navigate', { 
+                detail: { 
+                    page: 'lacak',
+                    id: trackingId 
+                } 
+            }));
         });
 
-        document.getElementById('btn-submit-another').addEventListener('click', () => {
-            // Kembali ke halaman pengajuan
-            this.showPengajuanPage();
+        document.getElementById('btn-go-home').addEventListener('click', () => {
+            // Mengirim pesan untuk navigasi ke halaman home
+            document.dispatchEvent(new CustomEvent('navigate', { 
+                detail: { 
+                    page: 'home' 
+                } 
+            }));
         });
     }
 }
