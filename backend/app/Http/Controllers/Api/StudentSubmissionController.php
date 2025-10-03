@@ -159,10 +159,14 @@ class StudentSubmissionController extends Controller
                 'token' => $submission->unique_token,
                 'status' => ucfirst($submission->status), // Uppercase first letter
                 'durasi_magang' => $submission->durasi_magang,
-                'processed_at' => $submission->processed_at ? $submission->processed_at->format('d M Y H:i') : null,
                 'admin_notes' => $submission->admin_notes,
                 'student_name' => $submission->student->nama, // Ambil nama student
                 'student_email' => $submission->student->email, // Ambil email student
+                'asal_sekolah' => $submission->student->asal_sekolah, // Ditambahkan
+                'jurusan' => $submission->student->jurusan,       // Ditambahkan
+                'file_url' => $submission->submission_file ? asset('storage/' . $submission->submission_file) : null,                      // Ditambahkan
+                'created_at' => $submission->created_at->format('d M Y H:i'), // Ditambahkan
+                'processed_at' => $submission->processed_at ? $submission->processed_at->format('d M Y H:i') : null,
             ]
         ]);
     }

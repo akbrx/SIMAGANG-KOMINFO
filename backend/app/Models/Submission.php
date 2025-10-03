@@ -25,9 +25,6 @@ class Submission extends Model
     ];
 
     protected $casts = [
-        // 'processed_at'  => 'datetime:d F Y H:i',
-        // 'created_at'    => 'datetime:d F Y H:i',
-        // 'updated_at'    => 'datetime:d F Y H:i',
         'processed_at'  => 'datetime',
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
