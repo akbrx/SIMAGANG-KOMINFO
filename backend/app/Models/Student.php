@@ -11,12 +11,8 @@ use Carbon\Carbon;
 class Student extends Model
 {
     use HasFactory;
-    protected $fillable = [
-        'nama',
-        'jurusan',
-        'nomor_telepon',
-        'email',
-        'asal_sekolah',
+    protected $guarded = [
+        'id',
     ];
     protected $casts = [
         'created_at'      => 'datetime:d F Y H:i', // Ini untuk created_at

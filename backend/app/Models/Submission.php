@@ -12,16 +12,8 @@ class Submission extends Model
     use HasFactory;
 
     // Tambahkan kolom yang bisa diisi
-    protected $fillable = [
-        'student_id',
-        'unique_token', 
-        'submission_hash',
-        'durasi_magang',
-        'submission_file',
-        'status',
-        'admin_notes',
-        'processed_by',
-        'processed_at',
+    protected $guarded = [
+        'id',
     ];
 
     protected $casts = [
@@ -29,6 +21,11 @@ class Submission extends Model
         'created_at'    => 'datetime',
         'updated_at'    => 'datetime',
     ];
+    protected function serializeDate(\DateTimeInterface $date)
+    {
+        return Carbon::parse($date)->setTimezone(config('app.timezone'))->format('d F Y H:i');
+    }
+
 
 
     public function student()

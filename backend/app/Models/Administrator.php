@@ -17,10 +17,8 @@ class Administrator extends Authenticatable
     /**
      * Kolom yang dapat diisi secara massal (mass assignable).
      */
-    protected $fillable = [
-        'nama',
-        'email',
-        'password',
+    protected $guarded = [
+        'id',
 
     ];
     protected $casts = [
