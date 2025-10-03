@@ -29,22 +29,42 @@ export class LacakView {
     // Fungsi untuk menampilkan hasil status
     displayStatus(statusData) {
     const resultContainer = document.getElementById('tracking-result');
-    // Memberi nilai default untuk logs jika tidak ada dari backend
+    
+    // 1. Ambil semua data dari backend dengan nama yang BENAR
     const { 
-        id, status, catatan, logs = [],
-        nama, instansi, jurusan, email 
+        status, catatan, 
+        student_name: nama,      // Ambil 'student_name' simpan sebagai 'nama'
+        asal_sekolah: instansi,  // Ambil 'asal_sekolah' simpan sebagai 'instansi'
+        jurusan,
+        student_email: email,    // Ambil 'student_email' simpan sebagai 'email'
+        created_at,              // Ambil tanggal diajukan
+        processed_at,            // Ambil tanggal disposisi
+        accepted_at,             // Ambil tanggal diterima (jika ada)
+        rejected_at              // Ambil tanggal ditolak (jika ada)
     } = statusData;
 
+    // Helper function untuk format tanggal agar lebih mudah dibaca
+    const formatTanggal = (tanggal) => {
+        if (!tanggal) return '';
+        // Cek jika formatnya sudah '02 Oct 2025 17:04', langsung kembalikan
+        if (typeof tanggal === 'string' && tanggal.includes(' ')) {
+            return tanggal;
+        }
+        const options = { year: 'numeric', month: 'short', day: 'numeric', hour: '2-digit', minute: '2-digit' };
+        return new Date(tanggal).toLocaleDateString('id-ID', options);
+    };
+
+    // 2. Buat blok HTML untuk detail pengajuan
     const submissionDetailsHTML = `
         <div class="submission-details">
-            <h3>Detail Pengajuan</h3>
+            <h3>Detail Pengaju</h3>
             <div class="detail-grid">
                 <div class="detail-item">
                     <span class="detail-label">Nama</span>
                     <span class="detail-value">${nama || '-'}</span>
                 </div>
                 <div class="detail-item">
-                    <span class="detail-label">Instansi Asal</span>
+                    <span class="detail-label">Asal Sekolah/Instansi</span>
                     <span class="detail-value">${instansi || '-'}</span>
                 </div>
                 <div class="detail-item">
@@ -59,6 +79,7 @@ export class LacakView {
         </div>
     `;
 
+    // 3. Buat Kartu Status (tidak berubah)
     const statusMap = {
         'DIAJUKAN': {
             displayText: 'DIAJUKAN',
@@ -89,15 +110,7 @@ export class LacakView {
             timelineStep: 1 // Ditolak setelah ditinjau
         }
     };
-
-    const currentStatusInfo = statusMap[status.toUpperCase()] || {
-        displayText: status,
-        message: 'Status dalam proses.',
-        cssClass: 'status-proses',
-        icon: '?',
-        timelineStep: 0
-    };
-
+    const currentStatusInfo = statusMap[status.toUpperCase()] || { /* ... */ };
     const statusCardHTML = `
         <div class="status-card ${currentStatusInfo.cssClass}">
             <div class="status-icon">${currentStatusInfo.icon}</div>
@@ -109,23 +122,34 @@ export class LacakView {
         </div>
     `;
 
+    // 4. Buat Timeline Proses dengan Timestamp dari data yang benar
     const steps = ['DIAJUKAN', 'DISPOSISI', 'DITERIMA'];
     let timelineHTML = `<div class="status-timeline">`;
-    const activeTimelineStep = currentStatusInfo.timelineStep;
+    const finalStatus = status.toUpperCase();
 
-    steps.forEach((step, index) => {
-        // Jangan tampilkan step 'DITERIMA' jika statusnya 'DITOLAK'
-        if (status.toUpperCase() === 'DITOLAK' && step === 'DITERIMA') return;
+    steps.forEach((step) => {
+        if (finalStatus === 'DITOLAK' && step === 'DITERIMA') return;
 
+        let timestamp = '';
         let statusClass = '';
-        // Cari log yang sesuai dengan langkah saat ini dari data backend
-        const log = logs.find(l => l.status.toUpperCase() === step);
-        
-        // Tentukan apakah langkah ini sudah selesai, sedang aktif, atau belum
-        if (index < activeTimelineStep) {
-            statusClass = 'completed';
-        } else if (index === activeTimelineStep) {
-            statusClass = (status.toUpperCase() === 'DITOLAK') ? 'active-rejected' : 'active';
+
+        switch (step) {
+            case 'DIAJUKAN':
+                timestamp = formatTanggal(created_at);
+                break;
+            case 'DISPOSISI':
+                timestamp = formatTanggal(processed_at);
+                break;
+            case 'DITERIMA':
+                timestamp = formatTanggal(accepted_at);
+                break;
+        }
+
+        if (timestamp) statusClass = 'completed';
+        if (finalStatus === step) statusClass = 'active';
+        if (finalStatus === 'DITOLAK' && step === 'DISPOSISI') {
+            statusClass = 'active-rejected';
+            timestamp = formatTanggal(rejected_at || processed_at);
         }
         
         timelineHTML += `
@@ -133,14 +157,15 @@ export class LacakView {
                 <div class="timeline-dot"></div>
                 <div class="timeline-content">
                     <h4>${step.charAt(0).toUpperCase() + step.slice(1).toLowerCase()}</h4>
-                    <p>${log ? log.timestamp : ''}</p> 
+                    <p>${timestamp}</p>
                 </div>
             </div>
         `;
     });
     timelineHTML += '</div>';
 
-    resultContainer.innerHTML = statusCardHTML + timelineHTML;
+    // 5. Gabungkan semua bagian dan tampilkan
+    resultContainer.innerHTML = submissionDetailsHTML + statusCardHTML + timelineHTML;
     resultContainer.style.display = 'block';
 }       
     displayError(message) {

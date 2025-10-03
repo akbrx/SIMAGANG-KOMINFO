@@ -18,8 +18,8 @@ export const render = () => {
                 <p class="login-info">Selamat Datang Kembali Admin</p>
                 <form id="login-form">
                     <div class="form-group">
-                        <input type="text" id="username" name="username" required autocomplete="off">
-                        <label for="username">Username</label>
+                        <input type="text" id="email" name="email" required autocomplete="off">
+                        <label for="email">Email</label>
                     </div>
                     <div class="form-group">
                         <input type="password" id="password" name="password" required>
