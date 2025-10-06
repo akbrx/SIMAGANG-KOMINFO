@@ -27,6 +27,12 @@ class SubmissionResource extends JsonResource
             'processed_at' => $this->processed_at ? $this->processed_at->format('d F Y H:i') : null,
             'created_at' => $this->created_at->format('d F Y H:i'),
             'updated_at' => $this->updated_at->format('d F Y H:i'),
+            'accepted_at' => $this->accepted_at ? $this->accepted_at->format('d F Y H:i') : null,
+            'rejected_at' => $this->rejected_at ? $this->rejected_at->format('d F Y H:i') : null,
+            'first_accessed_at' => $this->first_accessed_at ? $this->first_accessed_at->format('d F Y H:i') : null,
+            'student' => $this->whenLoaded('student'),
+            'processor' => $this->whenLoaded('processor'),
+            'original_filename' => $this->original_filename,
         ];
     }
 }

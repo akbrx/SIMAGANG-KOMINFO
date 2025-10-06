@@ -45,6 +45,7 @@ export const init = () => {
                 
                 // Simpan token ke localStorage untuk sesi login
                 localStorage.setItem('authToken', data.token);
+                localStorage.setItem('adminName', data.user.nama);
 
                 // Arahkan ke halaman dashboard
                 window.location.hash = '#dashboard';

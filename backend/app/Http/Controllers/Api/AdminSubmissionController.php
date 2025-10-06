@@ -25,7 +25,7 @@ class AdminSubmissionController extends Controller
     public function index(Request $request)
     {
         // Ambil semua submission, urutkan berdasarkan tanggal terbaru, dan ambil data student.
-        $submissions = Submission::with('student')
+        $submissions = Submission::with(['student', 'processor'])
             ->latest() // Urutkan dari yang terbaru
             ->paginate(15); // Gunakan paginate agar tidak memberatkan server
 
@@ -60,25 +60,49 @@ class AdminSubmissionController extends Controller
             return response()->json(['success' => false, 'message' => 'Data pengajuan tidak ditemukan.'], 404);
         }   
 
-        // 4. --- LOGIKA HYBRID ---
-        
-        // Cek apakah ini pertama kalinya pengajuan diproses
-        if (is_null($submission->processed_at)) {
-            // Jika ya, catat waktunya. Waktu ini TIDAK akan diubah lagi.
-            $submission->processed_at = now();
+        // 4. --- LOGIKA TIMESTAMP YANG BARU DAN LEBIH AKURAT ---
+
+        // A. Catat waktu akses pertama (hanya jika belum pernah diakses)
+        // Ini berjalan jika status awal adalah 'DIAJUKAN' dan diubah ke status lain.
+        if (is_null($submission->first_accessed_at) && $submission->status === 'DIAJUKAN' && $request->status !== 'DIAJUKAN') {
+            $submission->first_accessed_at = now();
         }
         
-        // Kolom 'processed_by' SELALU di-update dengan ID admin terakhir
-        // yang melakukan perubahan.
-        $submission->processed_by = $admin->id;
-        
-        // Update status dan catatan selalu dijalankan
+        // B. Selalu update status, catatan, dan siapa yang terakhir memproses
         $submission->status = $request->status;
         $submission->admin_notes = $request->admin_notes;
+        $submission->processed_by = $admin->id;
+
+        // C. Atur timestamp spesifik untuk setiap status
+        switch ($request->status) {
+            case 'DISPOSISI':
+                $submission->processed_at = now();
+                // Reset timestamp final jika status diubah kembali ke Disposisi
+                $submission->accepted_at = null;
+                $submission->rejected_at = null;
+                break;
+            case 'DITERIMA':
+                $submission->accepted_at = now();
+                $submission->rejected_at = null;
+                break;
+            case 'DITOLAK':
+                $submission->rejected_at = now();
+                $submission->accepted_at = null;
+                break;
+            case 'DIAJUKAN':
+                // Jika status dikembalikan ke awal, JANGAN reset first_accessed_at
+                // Cukup reset timestamp proses lainnya
+                $submission->processed_at = null;
+                $submission->accepted_at = null;
+                $submission->rejected_at = null;
+                $submission->processed_by = null;
+                break;
+        }
         
         $submission->save();
-
-        // 5. Berikan response sukses
+        $submission->load(['student', 'processor']);
+        
+        // 5. Berikan response sukses (Tetap sama)
         return response()->json([
             'success' => true,
             'message' => 'Status pengajuan berhasil diperbarui.',

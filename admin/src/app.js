@@ -1,32 +1,62 @@
+// src/app.js
+
 // Import views dan controllers
 import * as loginView from './views/login-view.js';
 import * as loginController from './controllers/login-controller.js';
 import * as dashboardView from './views/dashboard-view.js';
 import * as dashboardController from './controllers/dashboard-controller.js';
+import * as suratView from './views/surat-view.js';
+import * as suratController from './controllers/surat-controller.js';
 
 // --- ROUTER SEDERHANA ---
 const routes = {
     '#login': { view: loginView, controller: loginController },
     '#dashboard': { view: dashboardView, controller: dashboardController },
-    // Tambahkan rute lain di sini (misal: '#surat')
+    '#surat': { view: suratView, controller: suratController }
 };
 
+// [FUNGSI BARU] Untuk menangani status aktif pada menu sidebar
+function handleActiveMenu(path) {
+    const menuLinks = document.querySelectorAll('.sidebar-menu a');
+    menuLinks.forEach(link => {
+        // Hapus dulu class 'active' dari semua link
+        link.classList.remove('active');
+        
+        // Tambahkan class 'active' hanya jika hash-nya cocok dengan path saat ini
+        if (link.hash === path) {
+            link.classList.add('active');
+        }
+    });
+}
+
+// [FUNGSI BARU] Untuk membaca nama dari localStorage dan menampilkannya
+function updateAdminProfile() {
+    const profileNameSpan = document.querySelector('.profile-name');
+    const adminName = localStorage.getItem('adminName');
+
+    if (profileNameSpan && adminName) {
+        profileNameSpan.textContent = adminName;
+    } else if (profileNameSpan) {
+        profileNameSpan.textContent = 'Admin'; // Teks default jika nama tidak ada
+    }
+}
 function router() {
-    const path = window.location.hash || '#login';
+    const path = window.location.hash || '#dashboard'; // Ubah default ke #dashboard
     const appContainer = document.getElementById('app');
     const appWrapper = document.getElementById('app-wrapper');
-    const sidebar = document.querySelector('.sidebar');
+    const sidebar = document.getElementById('sidebar');
 
     const route = routes[path];
 
-    if (route) {
-        // Tampilkan/sembunyikan elemen UI berdasarkan halaman
+    // [DIPERBARUI] Panggil fungsi untuk handle menu aktif setiap kali rute berubah
+    handleActiveMenu(path);
+
+        if (route) {
         if (path === '#login') {
-            appWrapper.classList.add('login-layout');
-            if(sidebar) sidebar.style.display = 'none';
+                appWrapper.classList.add('login-layout');
         } else {
-            appWrapper.classList.remove('login-layout');
-            if(sidebar) sidebar.style.display = 'flex';
+                appWrapper.classList.remove('login-layout');
+                updateAdminProfile(); 
         }
 
         appContainer.innerHTML = route.view.render();
@@ -34,34 +64,63 @@ function router() {
             route.controller.init();
         }
     } else {
-        // Halaman default jika hash tidak cocok
-        window.location.hash = '#login';
+        // Jika hash tidak dikenali, arahkan ke dashboard
+            window.location.hash = '#dashboard';
     }
-}
+}       
 
 // --- FUNGSI INISIALISASI ---
 function initAppLayout() {
-    // Logika untuk tombol logout
+    // Logika untuk tombol logout (tetap sama)
     const logoutBtn = document.getElementById('logout-btn');
     if (logoutBtn) {
         logoutBtn.addEventListener('click', () => {
-            console.log('Logout clicked');
+            localStorage.removeItem('authToken');
+            localStorage.removeItem('adminName');
             window.location.hash = '#login';
         });
     }
 
-    // FUNGSI BARU: Logika untuk toggle sidebar
+    // [PERUBAHAN] Logika toggle sidebar disempurnakan
     const sidebarToggleBtn = document.getElementById('sidebar-toggle');
-    const sidebarEl = document.querySelector('.sidebar');
-    const mainContentEl = document.getElementById('main-content');
+    const appWrapper = document.getElementById('app-wrapper');
 
-    if (sidebarToggleBtn && sidebarEl && mainContentEl) {
+    if (sidebarToggleBtn && appWrapper) {
+        // [BARU] Atur kondisi awal sidebar berdasarkan ukuran layar saat halaman dimuat
+        if (window.innerWidth > 992) {
+            appWrapper.classList.add('sidebar-is-open');
+        }
+
+        // Event listener untuk tombol toggle (tetap sama)
         sidebarToggleBtn.addEventListener('click', () => {
-            sidebarEl.classList.toggle('closed');
-            mainContentEl.classList.toggle('sidebar-closed');
+            appWrapper.classList.toggle('sidebar-is-open');
         });
     }
 }
+
+// [PINDAHKAN KE SINI] Fungsi untuk menampilkan notifikasi toast
+window.showToast = function(message, type = 'success', duration = 3000) {
+    const container = document.getElementById('toast-container');
+    if (!container) {
+        console.error('Toast container not found!');
+        return;
+    }
+
+    const toast = document.createElement('div');
+    toast.className = `toast toast-${type}`;
+    toast.innerHTML = `<span>${message}</span>`;
+
+    container.appendChild(toast);
+
+    setTimeout(() => {
+        toast.classList.add('exit');
+        toast.addEventListener('animationend', () => {
+            toast.remove();
+        });
+    }, duration);
+}
+
+
 
 
 // --- EVENT LISTENERS ---

@@ -114,6 +114,7 @@ export class LacakView {
             student_email: email,
             created_at,
             processed_at,
+            updated_at,
             accepted_at,
             rejected_at
         } = statusData;
@@ -170,11 +171,12 @@ export class LacakView {
                 case 'DISPOSISI': timestamp = formatTanggal(processed_at); break;
                 case 'DITERIMA': timestamp = formatTanggal(accepted_at); break;
             }
-            if (timestamp) statusClass = 'completed';
-            if (finalStatus === step) statusClass = 'active';
-            if (finalStatus === 'DITOLAK' && step === 'DISPOSISI') {
-                statusClass = 'active-rejected';
-                timestamp = formatTanggal(rejected_at || processed_at);
+            if (timestamp){
+                statusClass = 'completed';
+            } 
+            if (finalStatus === step){
+                statusClass = 'active';
+
             }
             timelineHTML += `
                 <div class="timeline-item ${statusClass}">
@@ -186,6 +188,17 @@ export class LacakView {
                 </div>
             `;
         });
+        if (finalStatus === 'DITOLAK') {
+            timelineHTML += `
+                <div class="timeline-item active-rejected">
+                    <div class="timeline-dot"></div>
+                    <div class="timeline-content">
+                        <h4>Ditolak</h4>
+                        <p>${formatTanggal(rejected_at)}</p>
+                    </div>
+                </div>
+            `;
+        }
         timelineHTML += '</div>';
 
         resultContainer.innerHTML = submissionDetailsHTML + statusCardHTML + timelineHTML;

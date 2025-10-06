@@ -21,11 +21,11 @@
             </div>
 
             <div class="sidebar-profile">
-                <span class="profile-name">Nama Admin</span>
+                <span class="profile-name"></span>
             </div>
 
             <ul class="sidebar-menu">
-                <li><a href="#dashboard" class="active"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
+                <li><a href="#dashboard"><i class="fas fa-tachometer-alt"></i> Dashboard</a></li>
                 <li><a href="#surat"><i class="fas fa-envelope"></i> Surat</a></li>
             </ul>
 
@@ -37,7 +37,7 @@
         </div>
 
         <div class="main-content" id="main-content">
-             <button id="sidebar-toggle" class="sidebar-toggle">
+             <button id="sidebar-toggle" class="sidebar-toggle" title="Buka/Tutup Sidebar">
                 <i class="fas fa-bars"></i>
             </button>
             <div class="content-area" id="app">
@@ -49,6 +49,7 @@
     <!-- Library Chart.js -->
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script type="module" src="src/app.js"></script>
+            <div id="toast-container"></div>
 </body>
 </html>
 

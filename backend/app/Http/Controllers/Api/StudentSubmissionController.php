@@ -44,6 +44,7 @@ class StudentSubmissionController extends Controller
             'asal_sekolah' => 'nullable|string|max:255',
             'durasi_magang' => 'required|string|max:100',
             'submission_file' => 'required|file|mimes:pdf,doc,docx|max:5120',
+
         ], [
             'submission_file.required' => 'File surat pengajuan magang wajib diunggah.',
         ]);
@@ -102,6 +103,7 @@ class StudentSubmissionController extends Controller
                 'submission_hash' => $submissionHash, // <-- SIMPAN HASH DI SINI
                 'durasi_magang' => $request->durasi_magang,
                 'submission_file' => $filePath,
+                'original_filename' => $file->getClientOriginalName(), // Simpan nama file asli
                 'status' => 'DIAJUKAN', // Status awal
             ]);
 
@@ -167,6 +169,9 @@ class StudentSubmissionController extends Controller
                 'file_url' => $submission->submission_file ? asset('storage/' . $submission->submission_file) : null,                      // Ditambahkan
                 'created_at' => $submission->created_at->format('d M Y H:i'), // Ditambahkan
                 'processed_at' => $submission->processed_at ? $submission->processed_at->format('d M Y H:i') : null,
+                'updated_at' => $submission->updated_at->format('d M Y H:i'), // Ditambahkan
+                'accepted_at' => $submission->accepted_at ? $submission->accepted_at->format('d M Y H:i') : null,
+                'rejected_at' => $submission->rejected_at ? $submission->rejected_at->format('d M Y H:i') : null,
             ]
         ]);
     }

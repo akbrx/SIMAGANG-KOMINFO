@@ -57,10 +57,7 @@ body {
     transition: width 0.3s ease;
     z-index: 1000;
 }
-.sidebar.collapsed {
-    width: 0;
-    overflow: hidden;
-}
+
 
 /* --- [PERUBAHAN] Komponen di Dalam Sidebar --- */
 .sidebar-header {
@@ -166,16 +163,88 @@ body {
 .content-area {
     width: 100%;
 }
-
+/* --- Pengaturan Posisi Tombol Toggle --- */
 .sidebar-toggle {
-    display: none; /* Sembunyi di desktop, muncul di mobile */
+    position: absolute;
+    top: 20px;
+    /* z-index: 1001; */
+    transition: left 0.3s ease-in-out;
+    /* ... style tombol lainnya tidak berubah ... */
     font-size: 24px;
     background: #fff;
     border: 1px solid #ddd;
-    border-radius: 5px;
-    padding: 5px 10px;
-    margin-bottom: 15px;
+    border-radius: 8px;
+    padding: 5px 12px;
     cursor: pointer;
+    box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+}
+
+/* --- Pengaturan Sidebar & Konten Utama --- */
+.sidebar {
+    width: 260px;
+    height: 100vh;
+    position: fixed;
+    top: 0;
+    left: 0;
+    transition: margin-left 0.3s ease-in-out;
+    /* ... sisa style sidebar (background, flex, dll) tidak berubah ... */
+    background: #ffffff;
+    display: flex;
+    flex-direction: column;
+    box-shadow: 2px 0 15px rgba(0, 0, 0, 0.05);
+    z-index: 1000;
+}
+
+.main-content {
+    width: 100%; /* Defaultnya, konten mengisi seluruh layar */
+    padding: 25px;
+    transition: margin-left 0.3s ease-in-out;
+    padding-top: 80px;
+    
+}
+
+/* --- KONDISI DEFAULT (SIDEBAR TERTUTUP) --- */
+/* (Berlaku saat #app-wrapper TIDAK punya class .sidebar-is-open) */
+
+/* Dorong sidebar keluar layar ke kiri */
+.sidebar {
+    margin-left: -260px;
+}
+
+/* Posisikan tombol toggle di pojok kiri */
+.sidebar-toggle {
+    left: 20px;
+}
+
+/* Konten utama mengisi penuh dari ujung kiri */
+.main-content {
+    margin-left: 0;
+}
+
+
+/* --- KONDISI SAAT SIDEBAR TERBUKA --- */
+/* (Berlaku saat #app-wrapper PUNYA class .sidebar-is-open) */
+
+/* Tampilkan sidebar dengan mengembalikannya ke posisi semula */
+#app-wrapper.sidebar-is-open .sidebar {
+    margin-left: 0;
+}
+
+/* Geser tombol toggle ke samping sidebar */
+#app-wrapper.sidebar-is-open .sidebar-toggle {
+    left: 280px; /* 260px (lebar sidebar) + 20px (jarak) */
+}
+
+/* Dorong konten utama ke kanan selebar sidebar */
+#app-wrapper.sidebar-is-open .main-content {
+    margin-left: 260px;
+}
+
+/* Di layar kecil, kita tidak mau konten utama terdorong, biarkan sidebar menutupi */
+@media (max-width: 992px) {
+    #app-wrapper.sidebar-is-open .main-content {
+        margin-left: 0;
+    }
 }
 
 
@@ -441,3 +510,392 @@ body {
     }
 }
 
+/* ==========================================================================
+   8. GAYA TOMBOL & FORM MODERN (Gaya "Soft UI" / Neumorphism)
+   ========================================================================== */
+
+/* --- Warna dasar untuk UI --- */
+:root {
+    --ui-bg: #f4f7fc; /* Sesuaikan dengan warna background utama Anda */
+    --ui-text: #5a6a85;
+    --ui-primary: #2c5ae9;
+    --light-shadow: rgba(255, 255, 255, 0.9);
+    --dark-shadow: rgba(163, 177, 198, 0.6);
+}
+
+/* --- Base Button Style --- */
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.2s ease-in-out;
+    text-decoration: none;
+    display: inline-block;
+}
+
+/* --- Primary Button Style (Untuk Tombol "Detail") --- */
+.btn-primary {
+    background-color: var(--ui-bg);
+    color: var(--ui-primary);
+    box-shadow: 5px 5px 10px var(--dark-shadow), -5px -5px 10px var(--light-shadow);
+}
+
+.btn-primary:hover {
+    color: #1c3e91; /* Warna primer lebih gelap saat hover */
+}
+
+/* Efek "ditekan" saat tombol diklik */
+.btn-primary:active {
+    box-shadow: inset 3px 3px 7px var(--dark-shadow), inset -3px -3px 7px var(--light-shadow);
+    color: #1c3e91;
+    font-size: 0.88rem; /* Sedikit mengecil saat ditekan */
+}
+
+
+/* --- Wrapper untuk Select Dropdown --- */
+.select-wrapper {
+    position: relative;
+    display: inline-block;
+}
+
+/* --- Custom Arrow untuk Select Dropdown --- */
+.select-wrapper::after {
+    content: '❯'; /* Menggunakan panah yang lebih modern */
+    font-size: 1rem;
+    color: var(--ui-text);
+    position: absolute;
+    right: 15px;
+    top: 50%;
+    transform: translateY(-50%) rotate(90deg); /* Diputar 90 derajat */
+    pointer-events: none;
+    transition: transform 0.2s ease;
+}
+.select-wrapper:hover::after {
+    color: var(--ui-primary);
+}
+
+
+/* --- Modern Select/Dropdown Style (Gaya "Soft UI") --- */
+.select-status {
+    -webkit-appearance: none;
+    -moz-appearance: none;
+    appearance: none;
+    
+    background-color: var(--ui-bg);
+    color: var(--ui-text);
+    padding: 12px 35px 12px 20px; /* Padding kanan lebih besar untuk panah */
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 500;
+    font-size: 0.9rem;
+    font-family: 'Poppins', sans-serif;
+    transition: all 0.2s ease-in-out;
+    width: 170px;
+    box-shadow: inset 3px 3px 7px var(--dark-shadow), inset -3px -3px 7px var(--light-shadow);
+}
+
+.select-status:hover {
+    box-shadow: inset 2px 2px 5px var(--dark-shadow), inset -2px -2px 5px var(--light-shadow);
+    color: var(--ui-primary);
+}
+
+.select-status:focus {
+    outline: none;
+}
+.card-header-surat {
+    background-color: #2c5ae9; /* Warna biru primer yang sama dengan sidebar */
+    color: #ffffff;             /* Teks di dalamnya menjadi putih */
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+
+    /* [PENTING] Menyesuaikan sudut agar menyatu dengan lengkungan kartu.
+       Asumsikan .card-surat punya border-radius: 12px atau lebih. */
+    border-top-left-radius: inherit;
+    border-top-right-radius: inherit;
+}
+
+/* Sedikit penyesuaian agar teks di dalam header terlihat lebih baik */
+.card-header-surat .student-name {
+    margin: 0;
+    font-size: 1.1rem; /* Sedikit diperbesar agar lebih jelas */
+    font-weight: 600;
+}
+
+.card-header-surat .submission-date {
+    font-size: 0.8rem;
+    opacity: 0.85; /* Sedikit transparan agar tidak terlalu menonjol */
+}
+
+/* Memastikan badan kartu tetap berwarna putih/terang */
+.card-body-surat {
+    background-color: #ffffff; /* atau var(--card-bg) */
+}
+/* ==========================================================================
+   9. GAYA MODAL / POP-UP
+   ========================================================================== */
+
+.modal-overlay {
+  position: fixed; /* Kunci utama agar melayang di atas halaman */
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.6);
+  display: none; /* Awalnya disembunyikan */
+  justify-content: center;
+  align-items: center;
+  z-index: 1000; /* Memastikan modal ada di lapisan paling atas */
+  animation: fadeIn 0.3s ease;
+}
+
+/* Kelas '.show' ditambahkan oleh JavaScript untuk memunculkan modal */
+.modal-overlay.show {
+    display: flex;
+}
+
+.modal-content {
+  background: white;
+  padding: 2.5rem;
+  border-radius: 15px;
+  width: 90%;
+  max-width: 600px;
+  position: relative;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+  animation: slideUp 0.4s ease-out;
+}
+
+.modal-close-btn {
+  position: absolute;
+  top: 15px;
+  right: 15px;
+  background: none;
+  border: none;
+  font-size: 2rem;
+  cursor: pointer;
+  color: #aaa;
+  transition: color 0.2s;
+}
+.modal-close-btn:hover {
+    color: #333;
+}
+
+.detail-grid {
+    display: grid;
+    grid-template-columns: 1fr;
+    gap: 1rem;
+}
+
+.detail-item {
+    padding: 0.5rem 0;
+    border-bottom: 1px solid #eee;
+    font-size: 0.95rem;
+}
+.detail-item:last-child {
+    border-bottom: none;
+}
+.detail-item strong {
+    color: #333;
+}
+
+
+/* --- Animasi Sederhana untuk Modal --- */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideUp {
+  from { transform: translateY(30px); opacity: 0; }
+  to { transform: translateY(0); opacity: 1; }
+}
+/* ==========================================================================
+   11. GAYA KARTU HALAMAN SURAT (Final)
+   ========================================================================== */
+
+/* 1. Mengatur Jarak Antar Kartu */
+.card-grid-surat {
+    display: grid;
+    grid-template-columns: 1fr; /* Tetap satu kolom */
+    gap: 1.5rem; /* Properti 'gap' ini yang memberikan jarak vertikal antar kartu */
+}
+
+/* 2. & 3. Memberi Gaya pada Setiap Kartu (Lengkungan & Bayangan) */
+.card-surat {
+    background-color: #ffffff;
+    border-radius: 12px; /* Membuat sudut kartu menjadi melengkung (tidak tajam) */
+    box-shadow: 0 8px 25px rgba(163, 177, 198, 0.3); /* Memberikan efek bayangan agar terlihat mengambang */
+    overflow: hidden; /* Penting agar header biru di dalamnya ikut terpotong melengkung */
+    transition: all 0.3s ease; /* Menambahkan transisi halus untuk efek hover */
+}
+
+/* [Opsional] Menambahkan efek interaktif saat mouse diarahkan ke kartu */
+.card-surat:hover {
+    transform: translateY(-5px); /* Sedikit mengangkat kartu ke atas */
+    box-shadow: 0 12px 30px rgba(163, 177, 198, 0.4); /* Membuat bayangan sedikit lebih gelap dan besar */
+}
+/* Pastikan padding di header sudah konsisten */
+.card-header-surat {
+    padding: 15px 20px;
+    /* ... sisa style header tidak berubah ... */
+}
+
+
+/* [PENTING] Menambahkan padding pada badan kartu */
+.card-body-surat {
+    padding: 15px 20px;
+    background-color: #ffffff;
+}
+
+/* Mengatur jarak antar baris di dalam body */
+.info-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 0; /* Memberi jarak vertikal antar baris Status dan File */
+    border-bottom: 1px solid #f0f0f0; /* Garis pemisah tipis */
+}
+
+/* Menghilangkan garis pemisah pada baris terakhir di body */
+.info-row:last-child {
+    border-bottom: none;
+    padding-bottom: 0; /* Menghilangkan padding bawah agar rapi */
+}
+
+
+/* [PENTING] Memberi gaya dan padding pada bagian aksi (tombol) */
+.card-actions {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 15px 20px;
+    background-color: #f9fafb; /* Warna latar sedikit abu-abu untuk memisahkan */
+    border-top: 1px solid #e5e7eb; /* Garis pemisah dari body */
+}
+/* ==========================================================================
+   13. GAYA BADGE STATUS BERWARNA
+   ========================================================================== */
+
+/* Gaya dasar untuk semua badge status */
+.status-badge {
+    padding: 5px 12px;
+    border-radius: 9999px; /* Trik untuk membuat bentuk pil yang sempurna */
+    font-size: 1rem;    /* 12px */
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    display: inline-block;
+}
+
+/* HIJAU untuk Diterima */
+.status-badge.status-approved {
+    background-color: #d1fae5; /* Hijau muda */
+    color: #065f46;            /* Hijau tua */
+}
+
+/* MERAH untuk Ditolak */
+.status-badge.status-rejected {
+    background-color: #fee2e2; /* Merah muda */
+    color: #991b1b;            /* Merah tua */
+}
+
+/* KUNING untuk Disposisi */
+.status-badge.status-disposition {
+    background-color: #fef3c7; /* Kuning muda */
+    color: #92400e;            /* Coklat/oranye tua */
+}
+
+/* BIRU untuk Diajukan */
+.status-badge.status-submitted {
+    background-color: #dbeafe; /* Biru muda */
+    color: #1e40af;            /* Biru tua */
+}
+
+/* ABU-ABU sebagai fallback jika ada status tak dikenal */
+.status-badge.status-default {
+    background-color: #e5e7eb; /* Abu-abu muda */
+    color: #4b5563;            /* Abu-abu tua */
+}
+
+/* ==========================================================================
+   15. GAYA NOTIFIKASI TOAST
+   ========================================================================== */
+
+#toast-container {
+    position: fixed;
+    top: 20px;
+    right: 20px;
+    z-index: 9999;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 10px;
+}
+
+.toast {
+    background-color: #fff;
+    color: #333;
+    padding: 15px 20px;
+    border-radius: 8px;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.15);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-left: 5px solid; /* Garis warna penanda tipe notifikasi */
+    animation: slideInRight 0.4s ease-out;
+}
+
+/* Tipe notifikasi Sukses */
+.toast.toast-success {
+    border-left-color: #28a745; /* Hijau */
+}
+.toast.toast-success::before {
+    content: '✔';
+    color: #28a745;
+    font-weight: bold;
+}
+
+/* Tipe notifikasi Error (untuk nanti) */
+.toast.toast-error {
+    border-left-color: #dc3545; /* Merah */
+}
+.toast.toast-error::before {
+    content: '✖';
+    color: #dc3545;
+    font-weight: bold;
+}
+
+/* Animasi saat toast akan menghilang */
+.toast.exit {
+    animation: fadeOutRight 0.5s ease-in forwards;
+}
+
+
+/* --- Keyframes untuk Animasi --- */
+@keyframes slideInRight {
+    from {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+    to {
+        transform: translateX(0);
+        opacity: 1;
+    }
+}
+
+@keyframes fadeOutRight {
+    from {
+        transform: translateX(0);
+        opacity: 1;
+    }
+    to {
+        transform: translateX(100%);
+        opacity: 0;
+    }
+}
