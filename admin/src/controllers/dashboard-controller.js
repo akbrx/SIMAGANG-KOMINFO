@@ -1,39 +1,22 @@
-
-// --- DUMMY DATA ---
-
-const totalData = {
-    total: 125,
-    pending: 15,
-    disposisi: 30,
-    selesai: 80,
-};
-
-// Monthly data simulation
-const monthlyData = {
-    Januari: { pending: 10, disposisi: 20, selesai: 30 },
-    Februari: { pending: 5, disposisi: 15, selesai: 25 },
-    Maret: { pending: 8, disposisi: 22, selesai: 45 },
-    April: { pending: 12, disposisi: 18, selesai: 35 },
-    Mei: { pending: 7, disposisi: 25, selesai: 33 },
-    Juni: { pending: 3, disposisi: 15, selesai: 37 },
-    Juli: { pending: 9, disposisi: 30, selesai: 48 },
-    Agustus: { pending: 11, disposisi: 21, selesai: 39 },
-    September: { pending: 4, disposisi: 12, selesai: 26 },
-    Oktober: { pending: 6, disposisi: 14, selesai: 21 },
-    November: { pending: 2, disposisi: 8, selesai: 20 },
-    Desember: { pending: 5, disposisi: 15, selesai: 31 },
-};
+// [BARU] Import the model to handle all data logic
+import * as dashboardModel from '../models/dashboard-model.js';
 
 // --- CHART INSTANCES ---
-
+// Keep track of chart instances to destroy them before re-rendering
 let monthlyDistributionChartInstance = null;
 let yearlyTrendChartInstance = null;
 
+// [DIHAPUS] Semua fungsi yang berhubungan dengan pengambilan dan pemrosesan data
+// sekarang ada di dalam dashboard-model.js.
 
-// --- FUNCTIONS ---
+// --- UI RENDERING FUNCTIONS ---
+// Fungsi-fungsi ini (updateStatCards, populateMonthFilter, render...Chart)
+// TIDAK BERUBAH karena tugas mereka hanya menampilkan data yang sudah jadi.
 
+/**
+ * Updates the big stat cards with processed data.
+ */
 function updateStatCards(data) {
-
     const totalSuratEl = document.getElementById('total-surat');
     const pendingSuratEl = document.getElementById('pending-surat');
     const disposisiSuratEl = document.getElementById('disposisi-surat');
@@ -45,11 +28,14 @@ function updateStatCards(data) {
     if (selesaiSuratEl) selesaiSuratEl.textContent = data.selesai;
 }
 
+/**
+ * Populates the month filter dropdown.
+ */
 function populateMonthFilter() {
     const monthFilter = document.getElementById('month-filter');
     if (!monthFilter) return;
 
-    const months = Object.keys(monthlyData);
+    const months = ["Januari", "Februari", "Maret", "April", "Mei", "Juni", "Juli", "Agustus", "September", "Oktober", "November", "Desember"];
     monthFilter.innerHTML = months.map(month => `<option value="${month}">${month}</option>`).join('');
     
     const currentMonthName = new Date().toLocaleString('id-ID', { month: 'long' });
@@ -58,14 +44,15 @@ function populateMonthFilter() {
     }
 }
 
-
-function renderMonthlyDistributionChart(month) {
+/**
+ * Renders the monthly distribution pie chart.
+ */
+function renderMonthlyDistributionChart(month, allMonthlyData) {
     const ctx = document.getElementById('monthly-distribution-chart')?.getContext('2d');
     if (!ctx) return;
 
-    const data = monthlyData[month];
+    const data = allMonthlyData[month];
     if (!data) return;
-
 
     if (monthlyDistributionChartInstance) {
         monthlyDistributionChartInstance.destroy();
@@ -74,10 +61,10 @@ function renderMonthlyDistributionChart(month) {
     monthlyDistributionChartInstance = new Chart(ctx, {
         type: 'doughnut',
         data: {
-            labels: ['Pending', 'Disposisi', 'Selesai'],
+            labels: ['Diajukan', 'Disposisi', 'Diterima', 'Ditolak'],
             datasets: [{
-                data: [data.pending, data.disposisi, data.selesai],
-                backgroundColor: ['#ffc107', '#007bff', '#28a745'],
+                data: [data.diajukan, data.disposisi, data.diterima, data.ditolak],
+                backgroundColor: ['#ffc107', '#007bff', '#28a745', '#dc3545'],
                 borderColor: '#ffffff',
                 borderWidth: 2
             }]
@@ -85,17 +72,15 @@ function renderMonthlyDistributionChart(month) {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            plugins: {
-                legend: {
-                    position: 'bottom',
-                }
-            }
+            plugins: { legend: { position: 'bottom' } }
         }
     });
 }
 
-
-function renderYearlyTrendChart() {
+/**
+ * Renders the yearly trend bar chart.
+ */
+function renderYearlyTrendChart(allMonthlyData) {
     const ctx = document.getElementById('yearly-trend-chart')?.getContext('2d');
     if (!ctx) return;
     
@@ -103,10 +88,10 @@ function renderYearlyTrendChart() {
         yearlyTrendChartInstance.destroy();
     }
 
-    const months = Object.keys(monthlyData);
+    const months = Object.keys(allMonthlyData);
     const totalSuratPerMonth = months.map(month => {
-        const { pending, disposisi, selesai } = monthlyData[month];
-        return pending + disposisi + selesai;
+        const monthData = allMonthlyData[month];
+        return monthData.diajukan + monthData.disposisi + monthData.diterima + monthData.ditolak;
     });
 
     yearlyTrendChartInstance = new Chart(ctx, {
@@ -125,46 +110,54 @@ function renderYearlyTrendChart() {
         options: {
             responsive: true,
             maintainAspectRatio: false,
-            scales: {
-                y: {
-                    beginAtZero: true
-                }
-            },
-            plugins: {
-                legend: {
-                    display: false
-                }
-            }
+            scales: { y: { beginAtZero: true } },
+            plugins: { legend: { display: false } }
         }
     });
 }
 
-
-function updateCharts(selectedMonth) {
-    renderMonthlyDistributionChart(selectedMonth);
-}
-
-
 // --- INITIALIZATION ---
 
-export const init = () => {
-    // 1. Update total statistics cards
-    updateStatCards(totalData);
+/**
+ * Main function called by the router to initialize the dashboard.
+ * Now it orchestrates the Model and the View functions.
+ */
+export const init = async () => {
+    // 1. Set a loading state on the UI
+    updateStatCards({ total: '...', pending: '...', disposisi: '...', selesai: '...' });
 
-    // 2. Populate the month filter dropdown
-    populateMonthFilter();
+    // 2. [PERUBAHAN] Ask the model for the data
+    const data = await dashboardModel.getDashboardStats();
     
-    // 3. Render initial charts
-    const initialMonth = document.getElementById('month-filter').value;
-    updateCharts(initialMonth);
-    renderYearlyTrendChart();
-
-    // 4. Add event listener for when the filter selection changes
-    const monthFilterEl = document.getElementById('month-filter');
-    if (monthFilterEl) {
-        monthFilterEl.addEventListener('change', (e) => {
-            updateCharts(e.target.value);
-        });
+    // 3. If data is successfully fetched and processed, render the page
+    if (data) {
+        const { totalStats, monthlyStats } = data;
+        
+        // Populate UI elements with real data
+        updateStatCards(totalStats);
+        populateMonthFilter();
+        
+        // Render charts with an initial value
+        const monthFilterEl = document.getElementById('month-filter');
+        if (monthFilterEl) {
+            const initialMonth = monthFilterEl.value;
+            renderMonthlyDistributionChart(initialMonth, monthlyStats);
+            
+            // Add event listener for when the filter changes
+            monthFilterEl.addEventListener('change', (e) => {
+                renderMonthlyDistributionChart(e.target.value, monthlyStats);
+            });
+        }
+        
+        renderYearlyTrendChart(monthlyStats);
+    } else {
+        // If data is null, it means there was an error.
+        // The model has already logged it, and for critical errors like auth,
+        // it has already redirected. We can show a general error message here.
+        const appContainer = document.getElementById('app');
+        if (appContainer) {
+            appContainer.innerHTML = `<div class="error-page"><h4>Gagal Memuat Data</h4><p>Tidak dapat mengambil data dari server. Silakan coba lagi nanti.</p></div>`;
+        }
     }
 };
-    
+

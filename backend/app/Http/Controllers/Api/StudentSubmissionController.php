@@ -86,7 +86,7 @@ class StudentSubmissionController extends Controller
                 DB::rollBack(); // Batalkan transaksi karena tidak ada data baru yang dibuat
                 return response()->json([
                     'success' => true,
-                    'message' => 'Pengajuan dengan data identik sudah pernah ada. Berikut adalah token lacak Anda.',
+                    'message' => 'Pengajuan dengan data identik sudah pernah ada. Berikut adalah ID Anda.',
                     'unique_token' => $existingSubmission->unique_token,
                 ]);
             }
@@ -112,7 +112,7 @@ class StudentSubmissionController extends Controller
             // 6. RESPONSE SUKSES
             return response()->json([
                 'success' => true,
-                'message' => 'Pengajuan surat berhasil diunggah. Mohon simpan token unik ini untuk melacak status surat Anda.',
+                'message' => 'Pengajuan surat berhasil diunggah. Mohon simpan ID ini untuk melacak status surat Anda.',
                 'unique_token' => $uniqueToken,
             ], 201);
 
