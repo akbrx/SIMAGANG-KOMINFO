@@ -4,7 +4,7 @@ import { showNotification } from "../app.js";
 import { makeDraggable } from '../app.js';
 
 export class PengajuanController {
-  constructor(app) {
+  constructor() {
     this.view = new PengajuanView();
     this.model = new PengajuanModel();
   }
@@ -101,7 +101,7 @@ export class PengajuanController {
         });
         
         // Panggil fungsi untuk membuat note bisa digeser
-        this.makeDraggable(note); 
+        makeDraggable(note); 
     }
 
     // LOGIKA BARU UNTUK TOMBOL COPY
@@ -133,35 +133,4 @@ export class PengajuanController {
       });
     }
   }
-  makeDraggable(element) {
-        let currentX, currentY, initialX, initialY;
-        let xOffset = 0, yOffset = 0;
-        let isDragging = false;
-        const header = element.querySelector('.note-header');
-
-        header.addEventListener("mousedown", (e) => {
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
-            isDragging = true;
-        });
-
-        document.addEventListener("mousemove", (e) => {
-            if (isDragging) {
-                e.preventDefault();
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-                xOffset = currentX;
-                yOffset = currentY;
-                element.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
-            }
-        });
-        
-        document.addEventListener("mouseup", () => {
-            if (isDragging) {
-                initialX = currentX;
-                initialY = currentY;
-                isDragging = false;
-            }
-        });
-    }
 }
