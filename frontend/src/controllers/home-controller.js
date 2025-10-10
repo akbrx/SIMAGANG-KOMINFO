@@ -17,8 +17,25 @@ export class HomeController {
             this.handleNavigateToPengajuan,
             this.handleNavigateToLacak
         );
-        // Panggil juga setupNavLinks agar scroll berfungsi
+        this.setupAccordion();
         this.setupNavLinks();
+    }
+    setupAccordion() {
+        const accordionItems = document.querySelectorAll('.accordion-item');
+        
+        accordionItems.forEach(item => {
+            const header = item.querySelector('.accordion-header');
+            header.addEventListener('click', () => {
+                // Tutup semua item lain sebelum membuka yang ini
+                accordionItems.forEach(otherItem => {
+                    if (otherItem !== item) {
+                        otherItem.classList.remove('active');
+                    }
+                });
+                // Buka atau tutup item yang diklik
+                item.classList.toggle('active');
+            });
+        });
     }
 
     handleNavigateToPengajuan() {

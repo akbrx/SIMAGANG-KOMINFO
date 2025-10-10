@@ -42,64 +42,6 @@ export class LacakView {
             </div>
         </div>
         `;
-        
-        this.attachEventListeners();
-    }
-
-    attachEventListeners() {
-        const note = document.getElementById('floating-note');
-        const closeButton = document.getElementById('close-note');
-
-        if (note) {
-            this.makeDraggable(note);
-        }
-
-        if (closeButton) {
-            closeButton.addEventListener('click', () => {
-                note.style.display = 'none';
-            });
-        }
-    }
-
-    makeDraggable(element) {
-        let currentX;
-        let currentY;
-        let initialX;
-        let initialY;
-        let xOffset = 0;
-        let yOffset = 0;
-        let isDragging = false;
-
-        const header = element.querySelector('.note-header');
-
-        header.addEventListener("mousedown", (e) => {
-            initialX = e.clientX - xOffset;
-            initialY = e.clientY - yOffset;
-            isDragging = true;
-        });
-
-        document.addEventListener("mousemove", (e) => {
-            if (isDragging) {
-                e.preventDefault();
-                currentX = e.clientX - initialX;
-                currentY = e.clientY - initialY;
-
-                xOffset = currentX;
-                yOffset = currentY;
-
-                element.style.transform = `translate3d(${currentX}px, ${currentY}px, 0)`;
-            }
-        });
-        
-        document.addEventListener("mouseup", () => {
-            if (isDragging) {
-                initialX = currentX;
-                initialY = currentY;
-                isDragging = false;
-                
-                // [DIHAPUS] Logika untuk mengubah kursor body dihapus
-            }
-        });
     }
 
     // Fungsi untuk menampilkan hasil status
