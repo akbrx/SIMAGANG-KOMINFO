@@ -22,8 +22,17 @@ use App\Http\Controllers\Api\AuthController; // PENTING: Pastikan ini di-import
 // POST /api/pengajuan: Endpoint untuk MENGIRIM pengajuan surat baru
 Route::post('pengajuan', [StudentSubmissionController::class, 'store']); 
 
+// POST /api/submission/send-link: Endpoint untuk MENGIRIM link melacak
+Route::post('/pengajuan/send-link', [StudentSubmissionController::class, 'sendTrackingLink']);
+
+// Endpoint untuk meng-update data submission (EDIT)
+Route::put('/pengajuan/{token}', [StudentSubmissionController::class, 'update']);
+
 // GET /api/tracking/{token}: Endpoint untuk MELACAK status surat
 Route::get('tracking/{token}', [StudentSubmissionController::class, 'show']);
+
+// [BARU] Endpoint aman untuk mengambil semua data submission setelah verifikasi Magic Link
+Route::get('portal/pengajuan', [StudentSubmissionController::class, 'getSubmissionsForPortal']);
 
 // Catatan: Rute file download dipindahkan ke dalam group Admin untuk keamanan.
 
