@@ -9,7 +9,7 @@ export class HomeView {
     this.app.innerHTML = `
         <div  class="hero-container">
             <main id="home-section" class="content-container">
-                <h1>Sistem Informasi Magang</h1>
+                <h1 class="typing-animation-h1">Sistem Informasi Magang</h1>
                 <h2>Dinas Komunikasi Informatika Statistik dan Persandian</h2>
                 <p>
                     Selamat datang di portal resmi magang Diskominfo. Kami membuka kesempatan bagi mahasiswa dan siswa untuk mendapatkan pengalaman kerja profesional, mengembangkan kompetensi, dan berkontribusi dalam proyek-proyek inovatif di bidang teknologi dan komunikasi.
@@ -44,6 +44,40 @@ export class HomeView {
                         <p>Setelah pengajuan disetujui, Anda akan menerima surat balasan resmi langsung ke alamat email yang Anda daftarkan. Mudah dan efisien.</p>
                     </div>
                 </div>
+            </div>
+        </section>
+        <section id="faq-section" class="faq-container">
+            <div class="container">
+                <h2>Pertanyaan Umum (FAQ)</h2>
+                <div class="accordion">
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            Bagaimana jika saya lupa ID Lacak saya?
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-body">
+                            <p>Tidak perlu khawatir. Anda dapat mengajukan ulang permohonan dengan menggunakan data diri yang sama persis (nama, email, instansi, dll.). Sistem akan secara otomatis mendeteksi data yang identik dan memberikan ID Lacak Anda yang sebelumnya.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            Berapa lama proses verifikasi hingga surat dibalas?
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-body">
+                            <p>Proses verifikasi dan peninjauan biasanya memakan waktu antara 3 hingga 7 hari kerja, tergantung pada jumlah pengajuan yang masuk. Anda dianjurkan untuk memeriksa halaman pelacakan secara berkala.</p>
+                        </div>
+                    </div>
+                    <div class="accordion-item">
+                        <button class="accordion-header">
+                            Format file apa yang diterima untuk surat pengajuan?
+                            <span class="accordion-icon">+</span>
+                        </button>
+                        <div class="accordion-body">
+                            <p>Sistem hanya menerima file dalam format <strong>PDF</strong> dengan ukuran maksimal <strong>2MB</strong>. Pastikan Anda mengkonversi dokumen Anda ke format PDF sebelum mengunggahnya.</p>
+                        </div>
+                    </div>
+                    </div>
             </div>
         </section>
         <footer class="site-footer">

@@ -1,5 +1,6 @@
 import { LacakView } from '../views/lacak-view.js';
-import { LacakModel } from '../models/lacak-model.js'; // Impor model yang asli
+import { LacakModel } from '../models/lacak-model.js';
+import { makeDraggable } from '../app.js';
 
 export class LacakController {
     constructor() {
@@ -11,6 +12,10 @@ export class LacakController {
         this.view.render();
         this.setupEventListeners();
 
+        const note = document.getElementById('floating-note');
+        if (note) {
+            makeDraggable(note);
+        }
         if (trackingId) {
             document.getElementById('tracking-id-input').value = trackingId;
             this.handleLacak(trackingId);
@@ -18,12 +23,24 @@ export class LacakController {
     }
 
     setupEventListeners() {
+        // --- Logika untuk Form Pelacakan ---
         const form = document.getElementById('form-lacak');
-        form.addEventListener('submit', (event) => {
-            event.preventDefault();
-            const trackingId = document.getElementById('tracking-id-input').value;
-            this.handleLacak(trackingId);
-        });
+        if (form) {
+            form.addEventListener('submit', (event) => {
+                event.preventDefault();
+                const trackingId = document.getElementById('tracking-id-input').value;
+                this.handleLacak(trackingId);
+            });
+        }
+
+        // --- Logika untuk Tombol Close pada Note ---
+        const closeButton = document.getElementById('close-note');
+        const note = document.getElementById('floating-note');
+        if (closeButton && note) {
+            closeButton.addEventListener('click', () => {
+                note.style.display = 'none';
+            });
+        }
     }
 
     async handleLacak(id) {
