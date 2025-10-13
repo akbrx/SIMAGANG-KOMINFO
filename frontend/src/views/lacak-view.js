@@ -20,7 +20,7 @@ export class LacakView {
                     <button id="close-note" class="close-button" aria-label="Tutup">&times;</button>
                 </div>
                 <div class="note-body">
-                    <p>Silakan ajukan ulang dengan data diri yang sama <strong>persis</strong> agar mendapatkan ID yang sama.</p>
+                    <p>Lupa dengan ID Lacak Anda? Klik <a href="#" id="link-lupa-id">di sini</a> untuk bantuan.</p>
                 </div>
             </div>
 

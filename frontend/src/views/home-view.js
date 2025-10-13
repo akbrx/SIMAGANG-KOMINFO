@@ -56,7 +56,7 @@ export class HomeView {
                             <span class="accordion-icon">+</span>
                         </button>
                         <div class="accordion-body">
-                            <p>Tidak perlu khawatir. Anda dapat mengajukan ulang permohonan dengan menggunakan data diri yang sama persis (nama, email, instansi, dll.). Sistem akan secara otomatis mendeteksi data yang identik dan memberikan ID Lacak Anda yang sebelumnya.</p>
+                            <p>Anda bisa menggunakan fitur "Lupa ID". Silakan buka halaman Lacak, lalu klik link yang ada di dalam kotak catatan, atau langsung klik <a href="#" id="faq-link-lupa-id">di sini</a>.</p>
                         </div>
                     </div>
                     <div class="accordion-item">
