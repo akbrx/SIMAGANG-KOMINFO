@@ -43,24 +43,51 @@ class StudentSubmissionController extends Controller
             return response()->json(['success' => false, 'message' => 'Validasi gagal', 'errors' => $validator->errors()], 422);
         }
 
-        // Cek apakah email sudah ada. Ini adalah logika pengamanan utama.
-        $studentExists = Student::where('email', $request->email)->exists();
+        // Cek apakah ada siswa dengan email ini.
+        $student = Student::where('email', $request->email)->first();
 
-        if ($studentExists) {
-            // Jika email sudah ada, JANGAN BUAT SUBMISSION BARU.
-            // Kirim magic link untuk verifikasi dan pengelolaan.
-            $this->sendTrackingLink($request);
-            return response()->json([
-                'success' => true,
-                'email_exists' => true,
-                'message' => 'Email ini sudah terdaftar. Kami telah mengirimkan tautan ke email Anda untuk mengelola pengajuan yang sudah ada.',
-            ]);
+        if ($student) {
+            // Jika siswa ditemukan, cari pengajuan terakhir yang terkait dengannya.
+            $latestSubmission = Submission::where('student_id', $student->id)
+                ->latest() // Mengambil yang paling baru (order by created_at desc)
+                ->first();
+
+            if ($latestSubmission) {
+                $status = $latestSubmission->status;
+
+                // Tentukan status mana yang dianggap "aktif" atau "sedang diproses"
+                $activeStatuses = ['DIAJUKAN', 'DISPOSISI', 'DIPROSES']; // Tambahkan status lain jika ada
+
+                // Jika status pengajuan terakhir masih aktif, TOLAK pengajuan baru.
+                if (in_array($status, $activeStatuses)) {
+                    $formattedStatus = ucfirst(strtolower($status));
+
+                    return response()->json([
+                        'success'      => false,
+                        'email_exists' => true,
+                        // Pesan diubah agar lebih jelas
+                        'message'      => 'Anda masih memiliki pengajuan aktif dengan status: ' . $formattedStatus . '. Anda tidak dapat membuat pengajuan baru saat ini.',
+                        'status'       => $status
+                    ], 409); // 409 Conflict
+                }
+                // Jika statusnya DITERIMA atau DITOLAK, maka tidak terjadi apa-apa di sini.
+                // Eksekusi kode akan melanjutkan ke blok pembuatan submission baru di bawah.
+            }
+            // Jika ada siswa tapi tidak ada submission (kasus aneh), biarkan proses lanjut untuk membuat submission baru.
         }
 
         // Jika email benar-benar baru, lanjutkan membuat pengajuan.
         DB::beginTransaction();
         try {
-            $student = Student::create($request->only(['nama', 'email', 'jurusan', 'nomor_telepon', 'asal_sekolah']));
+            if (!$student) {
+                // Buat data siswa baru HANYA jika belum ada.
+                $student = Student::create($request->only(['nama', 'email', 'jurusan', 'nomor_telepon', 'asal_sekolah']));
+            } else {
+                // Jika siswa sudah ada, perbarui datanya dengan data dari form terbaru.
+                // Ini opsional, tapi bagus untuk menjaga data tetap update.
+                $student->update($request->only(['nama', 'jurusan', 'nomor_telepon', 'asal_sekolah']));
+            }
+            
             $file = $request->file('submission_file');
             $filePath = $file->store('submissions', 'public');
             $uniqueToken = $this->generateUniqueToken();
@@ -82,7 +109,6 @@ class StudentSubmissionController extends Controller
                 'message' => 'Pengajuan berhasil diunggah. Mohon simpan ID ini untuk melacak status surat Anda.',
                 'unique_token' => $uniqueToken,
             ], 201);
-
         } catch (Exception $e) {
             DB::rollBack();
             Log::error('Error saat submission baru: ' . $e->getMessage());
@@ -96,10 +122,10 @@ class StudentSubmissionController extends Controller
         if ($validator->fails()) {
             return response()->json(['success' => false, 'message' => 'Format email tidak valid.'], 422);
         }
-        
+
         $email = $request->input('email');
         if (!Student::where('email', $email)->exists()) {
-             return response()->json(['success' => false, 'message' => 'Email tidak ditemukan di sistem kami.'], 404);
+            return response()->json(['success' => false, 'message' => 'Email tidak ditemukan di sistem kami.'], 404);
         }
 
         $signedUrl = URL::temporarySignedRoute(
@@ -107,7 +133,7 @@ class StudentSubmissionController extends Controller
             now()->addMinutes(15),
             ['email' => $email]
         );
-        
+
         Mail::to($email)->send(new SubmissionTrackingLinkMail($signedUrl));
 
         return response()->json(['success' => true, 'message' => 'Tautan pelacakan telah dikirim ke email Anda.']);
@@ -122,9 +148,10 @@ class StudentSubmissionController extends Controller
         $student->portal_token_expires_at = now()->addMinutes(5);
         $student->save();
 
-        $frontendUrl = env('FRONTEND_URL', 'http://localhost:3000');
-        
-        return redirect()->away($frontendUrl . '/portal?token=' . $token);
+        $frontendUrl = env('FRONTEND_URL', 'http://127.0.0.1:3000');
+        $redirectUrl = $frontendUrl . '/#/lupa-id?token=' . $token;
+
+        return redirect()->away($redirectUrl);
     }
 
     public function getSubmissionsForPortal(Request $request)
@@ -136,9 +163,9 @@ class StudentSubmissionController extends Controller
 
         $hashedToken = hash('sha256', $token);
         $student = Student::where('portal_token', $hashedToken)
-                          ->where('portal_token_expires_at', '>', now())
-                          ->first();
-        
+            ->where('portal_token_expires_at', '>', now())
+            ->first();
+
         if (!$student) {
             return response()->json(['success' => false, 'message' => 'Unauthorized: Token tidak valid atau sudah kedaluwarsa.'], 401);
         }

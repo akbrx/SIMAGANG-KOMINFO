@@ -57,13 +57,27 @@ export class PengajuanController {
         this.view.renderSuccess(trackingId, message);
         this.setupSuccessPageListeners(trackingId);
       } catch (error) {
-        if (
-          error.message.toLowerCase().includes("pengajuan aktif") ||
-          error.message.toLowerCase().includes("data identik")
-        ) {
-          showNotification("Pengajuan Belum Dapat Diproses", error.message);
-        } else {
-          showNotification("Terjadi Kesalahan", error.message);
+        // Blok ini akan menangani semua respons non-2xx (misalnya 409, 500)
+
+        // Coba untuk mem-parsing pesan error sebagai JSON.
+        // Ini karena model kita akan melempar error yang berisi body JSON dari server.
+        try {
+            const errorData = JSON.parse(error.message);
+
+            // Cek apakah ini error spesifik 'email_exists' dari backend
+            if (errorData && errorData.email_exists === true) {
+                showNotification("Email Sudah Terdaftar", errorData.message);
+                // Karena proses "gagal" tapi informatif, kita tutup modalnya.
+                modal.style.display = "none";
+                form.reset();
+            } else {
+                // Untuk error validasi lain (422) atau error terstruktur lainnya
+                showNotification("Terjadi Kesalahan", errorData.message || "Gagal memproses permintaan.");
+            }
+        } catch (e) {
+            // Jika pesan error BUKAN JSON (misalnya error jaringan, 500 dengan HTML),
+            // tampilkan pesan error seperti biasa.
+            showNotification("Terjadi Kesalahan", error.message);
         }
       } finally {
         submitButton.disabled = false;

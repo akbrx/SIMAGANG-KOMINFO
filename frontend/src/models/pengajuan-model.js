@@ -13,25 +13,41 @@ export class PengajuanModel {
             const response = await fetch(this.apiUrl, {
                 method: 'POST',
                 body: formData,
-                // PENTING: JANGAN set header 'Content-Type' saat mengirim FormData.
-                // Browser akan menanganinya secara otomatis.
+                headers: {
+                    // Minta server untuk merespons dalam format JSON jika memungkinkan.
+                    // Ini membantu dalam negosiasi konten.
+                    'Accept': 'application/json',
+                },
             });
 
-            const result = await response.json();
-
+            // PERUBAHAN UTAMA: Cek status respons SEBELUM mencoba mem-parsing body.
             if (!response.ok) {
-                // Jika ada error validasi dari Laravel, tampilkan pesannya
-                let errorMessage = result.message || 'Terjadi kesalahan pada server.';
-                if (result.errors) {
-                    errorMessage = Object.values(result.errors).join('\n');
-                }
-                throw new Error(errorMessage);
+                // Jika respons adalah error (status 4xx atau 5xx)
+                const errorData = await response.json(); // Coba parse body error sebagai JSON
+
+                // Lemparkan error yang berisi seluruh data JSON dari server.
+                // Menggunakan JSON.stringify memastikan Controller bisa mem-parsingnya kembali.
+                throw new Error(JSON.stringify(errorData));
             }
 
-            return result;
+            // Jika respons sukses (status 2xx), baru kita parsing body-nya.
+            return await response.json();
 
         } catch (error) {
+            // Blok catch ini sekarang akan menangani 3 jenis error:
+            // 1. Error jaringan (server tidak terjangkau).
+            // 2. Error parsing JSON (jika server error 500 dan mengirim HTML).
+            // 3. Error yang kita lempar secara manual dari blok `if (!response.ok)`.
+
             console.error('Gagal mengirim pengajuan:', error);
+
+            // Periksa apakah pesan error adalah string JSON dari blok `if` di atas.
+            // Jika ya, jangan diubah. Jika tidak (error jaringan/parsing), buat pesan yg lebih umum.
+            if (!(error.message.startsWith('{') && error.message.endsWith('}'))) {
+                throw new Error('Tidak dapat terhubung ke server. Periksa koneksi Anda.');
+            }
+
+            // Lemparkan kembali error agar bisa ditangani oleh Controller.
             throw error;
         }
     }
