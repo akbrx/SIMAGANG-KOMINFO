@@ -11,14 +11,16 @@ export class LupaIdController {
   }
 
   showLupaIdPage(params = {}) {
-        this.view.render();
-        this.setupFormListener(); // Menyiapkan form input email
+    console.log("showLupaIdPage dipanggil dengan parameter:", params);
 
-        // Jika ada 'token' dari URL (pengguna datang dari magic link)
-        if (params.token) {
-            this.handleTokenVerification(params.token);
-        }
+    this.view.render();
+    this.setupFormListener(); // Menyiapkan form input email
+
+    // Jika ada 'token' dari URL (pengguna datang dari magic link)
+    if (params.token) {
+      this.handleTokenVerification(params.token);
     }
+  }
 
 
   setupFormListener() {
@@ -53,16 +55,19 @@ export class LupaIdController {
         });
     }
   async handleTokenVerification(token) {
-        try {
-            this.view.showLoading(); 
-            // Panggil model untuk menukar token dengan data pengajuan
-            const submissions = await this.model.getSubmissionsForPortal(token);
-            // Tampilkan hasilnya di view
-            this.view.displaySubmissions(submissions);
-        } catch (error) {
-            // Tampilkan error jika token tidak valid atau ada masalah lain
-            this.view.displayError(error.message);
-        }
+    console.log("handleTokenVerification dipanggil dengan token:", token);
+    try {
+      this.view.showLoading(); 
+      const submissions = await this.model.getSubmissionsForPortal(token);
+
+      console.log("Data submissions yang diterima dari model:", submissions);
+      
+      this.view.displaySubmissions(submissions);
+    } catch (error) {
+      console.error("Terjadi error saat verifikasi token:", error);
+      
+      this.view.displayError(error.message);
     }
+  }
 
 }
