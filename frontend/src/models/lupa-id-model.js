@@ -2,8 +2,9 @@
 
 export class LupaIdModel {
     constructor() {
-        // Endpoint API Anda untuk mengirim link
-        this.apiUrl = 'http://localhost:8000/api/pengajuan/send-link';
+        this.sendLinkUrl = 'http://localhost:8000/api/submission/send-link';
+        // Endpoint baru sesuai kode backend Anda
+        this.portalUrl = 'http://localhost:8000/api/submissions/portal';
     }
 
     /**
@@ -13,7 +14,7 @@ export class LupaIdModel {
      */
     async kirimLink(email) {
         try {
-            const response = await fetch(this.apiUrl, {
+            const response = await fetch(this.sendLinkUrl, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json',
@@ -32,6 +33,25 @@ export class LupaIdModel {
 
         } catch (error) {
             console.error('Gagal mengirim link:', error);
+            throw error;
+        }
+    }
+    async getSubmissionsForPortal(token) {
+        try {
+            const response = await fetch(this.portalUrl, {
+                method: 'GET',
+                headers: {
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${token}` // Gunakan Bearer Token
+                }
+            });
+            const result = await response.json();
+            if (!response.ok || !result.success) {
+                throw new Error(result.message || 'Token portal tidak valid.');
+            }
+            return result.data; // Backend mengirim data di properti 'data'
+        } catch (error) {
+            console.error('Gagal mengambil data portal:', error);
             throw error;
         }
     }

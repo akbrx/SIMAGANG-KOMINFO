@@ -90,20 +90,12 @@ export class PengajuanController {
   setupSuccessPageListeners(trackingId) {
     // Tombol Lacak Sekarang
     document.getElementById("btn-track-now").addEventListener("click", () => {
-      document.dispatchEvent(
-        new CustomEvent("navigate", {
-          detail: { page: "lacak", id: trackingId },
-        })
-      );
+      window.location.hash = `/lacak?id=${trackingId}`;
     });
 
     // Tombol Kembali ke Home
     document.getElementById("btn-go-home").addEventListener("click", () => {
-      document.dispatchEvent(
-        new CustomEvent("navigate", {
-          detail: { page: "home" },
-        })
-      );
+      window.location.hash = '/';
     });
 
     const note = document.getElementById('floating-note');

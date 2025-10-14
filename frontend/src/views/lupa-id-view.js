@@ -25,8 +25,28 @@ export class LupaIdView {
                         </button>
                     </div>
                 </form>
+                
             </div>
         </div>
     `;
-}
+    }
+    displaySubmissions(submissions) {
+        const container = document.getElementById('submission-list');
+        if (!submissions || submissions.length === 0) {
+            container.innerHTML = `<p class="info-message">Tidak ada pengajuan aktif yang ditemukan untuk email ini.</p>`;
+            return;
+        }
+
+        let html = '<h3>Pengajuan Ditemukan:</h3>';
+        submissions.forEach(sub => {
+            html += `
+                <a href="/#/lacak?id=${sub.token}" class="submission-card">
+                    <span class="submission-token">ID: ${sub.token}</span>
+                    <span class="submission-status status-${sub.status.toLowerCase()}">${sub.status}</span>
+                    <span class="submission-date">Diajukan: ${sub.created_at}</span>
+                </a>
+            `;
+        });
+        container.innerHTML = html;
+    }   
 }
