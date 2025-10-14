@@ -47,11 +47,7 @@ export class LacakController {
     if (lupaIdLink) {
       lupaIdLink.addEventListener("click", (event) => {
         event.preventDefault();
-        document.dispatchEvent(
-          new CustomEvent("navigate", {
-            detail: { page: "lupa-id" },
-          })
-        );
+        window.location.hash = "/lupa-id";
       });
     }
   }

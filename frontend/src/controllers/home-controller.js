@@ -41,31 +41,19 @@ export class HomeController {
     if (lupaIdLinkFaq) {
       lupaIdLinkFaq.addEventListener("click", (event) => {
         event.preventDefault();
-        document.dispatchEvent(
-          new CustomEvent("navigate", {
-            detail: { page: "lupa-id" },
-          })
-        );
+        window.location.hash = "/lupa-id";
       });
     }
   }
 
   handleNavigateToPengajuan() {
     // Kirim pesan untuk navigasi ke halaman pengajuan
-    document.dispatchEvent(
-      new CustomEvent("navigate", {
-        detail: { page: "pengajuan" },
-      })
-    );
+    window.location.hash = '/pengajuan';
   }
 
   handleNavigateToLacak() {
     // Kirim pesan untuk navigasi ke halaman lacak
-    document.dispatchEvent(
-      new CustomEvent("navigate", {
-        detail: { page: "lacak" },
-      })
-    );
+    window.location.hash = '/lacak';
   }
 
   // Fungsi ini tetap di sini untuk menangani scroll di halaman home
@@ -73,6 +61,7 @@ export class HomeController {
     const homeLink = document.getElementById("nav-home");
     const aboutLink = document.getElementById("nav-about");
     const brandLink = document.getElementById("brand-link");
+    const faqLink = document.getElementById("nav-faq");
 
     if (homeLink) {
       homeLink.addEventListener("click", (e) => {
@@ -95,6 +84,14 @@ export class HomeController {
         e.preventDefault();
         document
           .getElementById("home-section")
+          .scrollIntoView({ behavior: "smooth" });
+      });
+    }
+    if (faqLink) {
+      faqLink.addEventListener("click", (e) => {
+        e.preventDefault();
+        document
+          .getElementById("faq-section")
           .scrollIntoView({ behavior: "smooth" });
       });
     }

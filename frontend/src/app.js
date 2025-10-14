@@ -12,34 +12,39 @@ export class App {
         this.lacakController = new LacakController();
         this.lupaIdController = new LupaIdController();
 
-        this.setupNavigationListener(); // Panggil listener utama
-        this.setupGlobalNavLinks();     // Panggil listener untuk navbar global
-        
-        this.navigateToHome(); // Tampilkan halaman home saat pertama kali buka
+        // ini untuk berganti halamnan menggunakan dispatch event
+
+        // this.setupNavigationListener(); 
+        // this.setupGlobalNavLinks();     
+        // this.navigateToHome();
+
+        // ini untuk berganti halaman menggunakan window.location.hash
+        window.addEventListener('hashchange', () => this.handleRouteChange());
+        window.addEventListener('load', () => this.handleRouteChange());
     }
 
     // Listener untuk navigasi antar "halaman"
-    setupNavigationListener() {
-        document.addEventListener('navigate', (event) => {
-            const page = event.detail.page;
-            const id = event.detail.id;
+    handleRouteChange() {
+        const hash = window.location.hash.slice(1) || '/'; // Ambil path dari URL
+        const [path, queryString] = hash.split('?');
+        const params = new URLSearchParams(queryString || '');
 
-            switch (page) {
-                case 'home':
-                    this.navigateToHome();
-                    break;
-                case 'lacak':
-                    this.navigateToLacak(id);
-                    break;
-                case 'pengajuan':
-                    this.navigateToPengajuan();
-                    break;
-                case 'lupa-id': 
-                    this.navigateToLupaId(); 
-                    break;
-            
-            }
-        });
+        switch (path) {
+            case '/pengajuan':
+                this.pengajuanController.showPengajuanPage();
+                break;
+            case '/lacak':
+                this.lacakController.showLacakPage(params.get('id'));
+                break;
+            case '/lupa-id':
+                // Teruskan parameter email ke controller
+                this.lupaIdController.showLupaIdPage(Object.fromEntries(params));
+                break;
+            default:
+                this.homeController.showHomePage();
+                break;
+        }
+        window.scrollTo({ top: 0, behavior: 'auto' });
     }
 
     // Listener untuk link di navbar yang bersifat global
@@ -69,13 +74,12 @@ export class App {
 
     // Fungsi baru untuk klik navbar: tampilkan home, lalu scroll
     navigateToHomeAndScroll(targetId) {
-        this.navigateToHome();
-        setTimeout(() => {
+        if (window.location.hash === '' || window.location.hash === '#/') {
             const element = document.querySelector(targetId);
-            if(element) {
-                element.scrollIntoView({ behavior: 'smooth' });
-            }
-        }, 100);
+            if (element) element.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            window.location.hash = `/?scrollTo=${targetId.substring(1)}`;
+        }
     }
 
     navigateToPengajuan() {
@@ -94,9 +98,9 @@ export class App {
     }
 }
 
-export function showNotification(title, message, type = 'warning') { // Tambah parameter 'type'
+export function showNotification(title, message, type = 'warning') { 
     const modal = document.getElementById('notification-modal');
-    const modalContent = document.getElementById('notification-content'); // Kita butuh ini untuk ganti warna
+    const modalContent = document.getElementById('notification-content');
     const iconElement = document.getElementById('notification-icon');
     const titleElement = document.getElementById('notification-title');
     const messageElement = document.getElementById('notification-message');
@@ -118,11 +122,9 @@ export function showNotification(title, message, type = 'warning') { // Tambah p
 
     const selectedType = notificationTypes[type] || notificationTypes.warning;
 
-    // Hapus class lama, tambahkan class baru untuk warna
     modalContent.classList.remove('notif-success', 'notif-warning');
     modalContent.classList.add(selectedType.className);
     
-    // Ganti ikon, judul, dan pesan
     iconElement.innerHTML = selectedType.icon;
     titleElement.textContent = title;
     messageElement.textContent = message;
