@@ -2,9 +2,9 @@
 
 export class LupaIdModel {
     constructor() {
-        this.sendLinkUrl = 'http://localhost:8000/api/submission/send-link';
+        this.sendLinkUrl = 'http://localhost:8000/api/pengajuan/send-link';
         // Endpoint baru sesuai kode backend Anda
-        this.portalUrl = 'http://localhost:8000/api/submissions/portal';
+        this.portalUrl = 'http://localhost:8000/api/portal/pengajuan';
     }
 
     /**
