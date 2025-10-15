@@ -12,17 +12,32 @@
 <body>
 
     <nav class="navbar">
-        <a href="#home-section" id="brand-link" class="navbar-brand">
-            <img src="../assets/img/kominfo.png" alt="Logo Kominfo" class="navbar-logo">
+        <a href="/#/" id="brand-link" class="navbar-brand">
             <img src="../assets/img/pemkot.png" alt="Logo Pemkot Pekanbaru" class="navbar-logo">
+            <img src="../assets/img/kominfo.png" alt="Logo Kominfo" class="navbar-logo">
             <span>SIMAGANG</span>
         </a>
         <ul class="navbar-links">
-            <li><a href="#home-section" id="nav-home">Home</a></li>
-            <li><a href="#about-section" id="nav-about">About</a></li>
+            <li><a href="#" id="nav-home">Home</a></li>
+            <li><a href="#" id="nav-about">About</a></li>
             <li><a href="#" id="nav-faq">FAQ</a></li>
         </ul>
+        <button id="hamburger-btn" class="hamburger-button">
+            <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="3" y1="12" x2="21" y2="12"></line>
+                <line x1="3" y1="6" x2="21" y2="6"></line>
+                <line x1="3" y1="18" x2="21" y2="18"></line>
+            </svg>
+        </button>
     </nav>
+
+    <ul class="sidebar" id="sidebar-menu">
+        <li><a href="#" id="sidebar-home" class="sidebar-link">Home</a></li>
+        <li><a href="#" id="sidebar-about" class="sidebar-link">About</a></li>
+        <li><a href="#" id="sidebar-faq" class="sidebar-link">FAQ</a></li>
+    </ul>
+
+    <div class="sidebar-overlay" id="sidebar-overlay"></div>
 
     <main id="app"></main>
 

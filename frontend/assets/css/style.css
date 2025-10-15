@@ -166,7 +166,7 @@ body {
     text-align: center; /* Pastikan teks di dalam item juga center */
     max-width: 800px; /* Batasi lebar kontainer */
     margin: 0 auto; /* Pastikan kontainer itu sendiri di tengah */
-    height: calc(100vh - 80px); /* Atur tinggi agar bisa menengahkan vertikal (80px untuk navbar) */
+    height: calc(100vh - 150px); /* Atur tinggi agar bisa menengahkan vertikal (80px untuk navbar) */
     padding: 20px; /* Sedikit padding agar tidak terlalu mepet */
     box-sizing: border-box; /* Pastikan padding tidak menambah lebar */
 }
@@ -955,7 +955,7 @@ body {
 /* CSS untuk catatan melayang dengan gaya modern */
 .floating-note {
     position: absolute;
-    top: 80px;
+    bottom: 70px;
     right: 30px;
     width: 280px;
     background-color: transparent; /* Warna biru muda */
@@ -1367,3 +1367,100 @@ body {
 .status-disposisi { background-color: rgba(0, 123, 255, 0.2); color: #3498db; }
 .status-diterima { background-color: rgba(46, 213, 115, 0.2); color: #2ed573; }
 .status-ditolak { background-color: rgba(255, 107, 107, 0.2); color: #ff6b6b; }
+
+
+
+/* === CSS UNTUK NAVBAR RESPONSIVE (HAMBURGER MENU) === */
+
+/* Style untuk tombol hamburger */
+.hamburger-button {
+    display: none; /* Sembunyikan di desktop */
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 0;
+}
+
+.hamburger-button svg {
+    color: #fdfeff; /* Sesuaikan dengan warna teks navbar Anda */
+}
+
+/* Overlay di belakang sidebar */
+.sidebar-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background-color: rgba(0, 0, 0, 0.5);
+    z-index: 998;
+    opacity: 0; /* Awalnya transparan */
+    visibility: hidden; /* Awalnya tersembunyi */
+    transition: opacity 0.4s ease, visibility 0.4s ease;
+}
+.sidebar-overlay.is-active {
+    opacity: 1;
+    visibility: visible;
+}
+
+/* Sidebar itu sendiri */
+.sidebar {
+    list-style: none;
+    margin: 0;
+    padding: 40px 20px;
+    position: fixed;
+    top: 0;
+    right: 0;
+    width: 280px; /* Lebar sidebar */
+    height: 100vh;
+    background-color: #020a17; /* Warna gelap */
+    box-shadow: -5px 0 15px rgba(0, 0, 0, 0.2);
+    z-index: 999;
+    
+    /* Awalnya tersembunyi di luar layar kanan */
+    transform: translateX(100%);
+    transition: transform 0.4s ease-in-out;
+}
+.sidebar.is-active {
+    transform: translateX(0); /* Muncul ke posisi normal */
+}
+
+.sidebar li {
+    margin: 25px 0;
+}
+
+.sidebar-link {
+    color: #cbd5e1;
+    text-decoration: none;
+    font-size: 1.2rem;
+    font-weight: 600;
+    padding: 10px;
+    display: block;
+    transition: color 0.3s ease, background-color 0.3s ease;
+    border-radius: 8px;
+}
+.sidebar-link:hover {
+    color: #ffffff;
+    background-color: #334155;
+}
+
+/* Aturan untuk layar desktop */
+.sidebar {
+    display: none; /* Sembunyikan sidebar di desktop */
+}
+.navbar-links {
+    display: flex; /* Tampilkan menu navbar normal di desktop */
+}
+
+/* Aturan untuk layar mobile */
+@media (max-width: 768px) {
+    .navbar-links {
+        display: none; /* Sembunyikan menu navbar normal di mobile */
+    }
+    .hamburger-button {
+        display: block; /* Tampilkan tombol hamburger di mobile */
+    }
+    .sidebar {
+        display: block; /* Tampilkan (tapi di luar layar) sidebar di mobile */
+    }
+}

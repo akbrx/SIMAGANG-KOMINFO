@@ -11,6 +11,8 @@ export class App {
         this.pengajuanController = new PengajuanController();
         this.lacakController = new LacakController();
         this.lupaIdController = new LupaIdController();
+        this.handleRouteChange();
+        
 
         // ini untuk berganti halamnan menggunakan dispatch event
 
@@ -21,6 +23,9 @@ export class App {
         // ini untuk berganti halaman menggunakan window.location.hash
         window.addEventListener('hashchange', () => this.handleRouteChange());
         window.addEventListener('load', () => this.handleRouteChange());
+
+        this.setupDesktopNavLinks();
+        this.setupMobileMenu();
     }
 
     // Listener untuk navigasi antar "halaman"
@@ -47,8 +52,7 @@ export class App {
         window.scrollTo({ top: 0, behavior: 'auto' });
     }
 
-    // Listener untuk link di navbar yang bersifat global
-    setupGlobalNavLinks() {
+    setupDesktopNavLinks() {
         const navLinks = {
             'nav-home': '#home-section',
             'nav-about': '#about-section',
@@ -63,6 +67,46 @@ export class App {
                     event.preventDefault();
                     this.navigateToHomeAndScroll(targetId);
                 });
+            }
+        }
+    }
+
+    setupMobileMenu() {
+        const hamburgerBtn = document.getElementById('hamburger-btn');
+        const sidebarMenu = document.getElementById('sidebar-menu');
+        const sidebarOverlay = document.getElementById('sidebar-overlay');
+        const sidebarLinks = document.querySelectorAll('.sidebar-link');
+
+        const closeMenu = () => {
+            sidebarMenu.classList.remove('is-active');
+            sidebarOverlay.classList.remove('is-active');
+        };
+
+        const sidebarNavLinks = {
+            'sidebar-home': '#home-section',
+            'sidebar-about': '#about-section',
+            'sidebar-faq': '#faq-section'
+        };
+
+        if (hamburgerBtn) {
+            hamburgerBtn.addEventListener('click', () => {
+                sidebarMenu.classList.add('is-active');
+                sidebarOverlay.classList.add('is-active');
+            });
+
+            if (sidebarOverlay) {
+                sidebarOverlay.addEventListener('click', closeMenu);
+            }
+
+            for (const [id, targetId] of Object.entries(sidebarNavLinks)) {
+                const link = document.getElementById(id);
+                if (link) {
+                    link.addEventListener('click', (event) => {
+                        event.preventDefault();
+                        this.navigateToHomeAndScroll(targetId); // Lakukan scroll
+                        closeMenu(); // Tutup menu setelah diklik
+                    });
+                }
             }
         }
     }
