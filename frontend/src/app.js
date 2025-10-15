@@ -13,6 +13,7 @@ export class App {
         this.lupaIdController = new LupaIdController();
         this.handleRouteChange();
         this.scrollTarget = null;
+        this.setupContactWidget();
 
         // ini untuk berganti halamnan menggunakan dispatch event
 
@@ -158,6 +159,24 @@ export class App {
     navigateToLupaId() {
         this.lupaIdController.showLupaIdPage();
         window.scrollTo({ top: 0, behavior: 'auto' });
+    }
+
+    setupContactWidget() {
+        const fab = document.getElementById('contact-fab');
+        const popup = document.getElementById('contact-popup');
+        const closeBtn = document.getElementById('close-popup-btn');
+
+        if (fab && popup && closeBtn) {
+            // Tampilkan/sembunyikan pop-up saat tombol FAB diklik
+            fab.addEventListener('click', () => {
+                popup.classList.toggle('is-active');
+            });
+
+            // Sembunyikan pop-up saat tombol close diklik
+            closeBtn.addEventListener('click', () => {
+                popup.classList.remove('is-active');
+            });
+        }
     }
 }
 

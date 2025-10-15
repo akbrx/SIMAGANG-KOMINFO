@@ -1479,3 +1479,149 @@ body {
         display: block; /* Tampilkan (tapi di luar layar) sidebar di mobile */
     }
 }
+
+/* === WIDGET KONTAK MELAYANG (LENGKAP) === */
+
+.contact-widget {
+    position: fixed; /* Kunci agar tetap di pojok layar */
+    bottom: 30px;
+    right: 30px;
+    z-index: 1000;
+}
+
+/* Tombol bulat (Floating Action Button) */
+.contact-fab {
+    width: 60px;
+    height: 60px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 50%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 4px 15px rgba(0, 123, 255, 0.4);
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
+.contact-fab:hover {
+    transform: scale(1.1);
+    background-color: #0056b3;
+}
+
+/* Jendela pop-up */
+.contact-popup {
+    position: absolute;
+    bottom: 80px; /* Jarak dari tombol FAB */
+    right: 0;
+    width: 320px;
+    background-color: #ffffff;
+    border-radius: 12px;
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+    
+    /* Logika untuk menyembunyikan/menampilkan */
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(10px);
+    transition: all 0.3s ease-out;
+}
+
+.contact-popup.is-active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+/* Logo di atas pop-up */
+.popup-logo {
+    text-align: center;
+    /* Tarik logo sedikit ke atas agar 'menggantung' di atas kartu */
+    margin-top: -40px; 
+    margin-bottom: 10px;
+}
+
+.popup-logo img {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%; /* Membuat gambar menjadi bulat */
+    border: 3px solid #ffffff;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.1);
+    background-color: #ffffff; /* Latar belakang jika gambar transparan */
+}
+
+/* Header di dalam pop-up */
+.popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px 15px 20px;
+    border-bottom: 1px solid #e2e8f0;
+}
+
+.popup-header h4 {
+    margin: 0;
+    font-size: 1.1rem;
+    color: #1e293b;
+}
+
+.popup-close-btn {
+    background: none;
+    border: none;
+    font-size: 24px;
+    color: #94a3b8;
+    cursor: pointer;
+}
+.popup-close-btn:hover {
+    color: #334155;
+}
+
+/* Body di dalam pop-up */
+.popup-body {
+    padding: 20px;
+    color: #475569;
+    font-size: 0.95rem;
+}
+
+.popup-body p {
+    margin-top: 0;
+    margin-bottom: 15px;
+}
+
+.admin-contact-link {
+    display: block;
+    background-color: #f1f5f9;
+    padding: 12px;
+    border-radius: 8px;
+    text-align: center;
+    font-weight: 600;
+    font-size: 1.1rem;
+    color: #007bff;
+    text-decoration: none;
+    transition: background-color 0.3s ease;
+}
+.admin-contact-link:hover {
+    background-color: #e2e8f0;
+}
+
+/* /assets/css/style.css */
+
+/* Sesuaikan style tombol FAB yang sudah ada */
+.contact-fab {
+    width: 70px;
+    height: 70px;
+    border-radius: 50%;
+    /* ...properti lain... */
+
+    /* Hapus padding agar gambar bisa memenuhi tombol */
+    padding: 0; 
+    /* Sembunyikan bagian gambar yang keluar dari lingkaran */
+    overflow: hidden; 
+}
+
+/* Style baru untuk gambar di dalam tombol FAB */
+.contact-fab img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover; /* Memastikan gambar memenuhi lingkaran tanpa distorsi */
+}
