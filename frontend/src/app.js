@@ -12,7 +12,7 @@ export class App {
         this.lacakController = new LacakController();
         this.lupaIdController = new LupaIdController();
         this.handleRouteChange();
-        
+        this.scrollTarget = null;
 
         // ini untuk berganti halamnan menggunakan dispatch event
 
@@ -30,7 +30,7 @@ export class App {
 
     // Listener untuk navigasi antar "halaman"
     handleRouteChange() {
-        const hash = window.location.hash.slice(1) || '/'; // Ambil path dari URL
+        const hash = window.location.hash.slice(1) || '/';
         const [path, queryString] = hash.split('?');
         const params = new URLSearchParams(queryString || '');
 
@@ -47,9 +47,17 @@ export class App {
                 break;
             default:
                 this.homeController.showHomePage();
+                if (this.scrollTarget) {
+                    setTimeout(() => {
+                        const element = document.querySelector(this.scrollTarget);
+                        if (element) element.scrollIntoView({ behavior: 'smooth' });
+                        
+                        // Hapus ingatan setelah selesai scroll
+                        this.scrollTarget = null; 
+                    }, 100);
+                }
                 break;
         }
-        window.scrollTo({ top: 0, behavior: 'auto' });
     }
 
     setupDesktopNavLinks() {
@@ -76,6 +84,7 @@ export class App {
         const sidebarMenu = document.getElementById('sidebar-menu');
         const sidebarOverlay = document.getElementById('sidebar-overlay');
         const sidebarLinks = document.querySelectorAll('.sidebar-link');
+        const closeBtn = document.getElementById('sidebar-close-btn');
 
         const closeMenu = () => {
             sidebarMenu.classList.remove('is-active');
@@ -108,6 +117,9 @@ export class App {
                     });
                 }
             }
+            if (closeBtn) {
+            closeBtn.addEventListener('click', closeMenu);
+        }
         }
     }
 
@@ -118,13 +130,20 @@ export class App {
 
     // Fungsi baru untuk klik navbar: tampilkan home, lalu scroll
     navigateToHomeAndScroll(targetId) {
-        if (window.location.hash === '' || window.location.hash === '#/') {
+        const currentPath = window.location.hash.slice(1).split('?')[0] || '/';
+
+        // Jika kita sudah di halaman utama
+        if (currentPath === '/') {
             const element = document.querySelector(targetId);
             if (element) element.scrollIntoView({ behavior: 'smooth' });
         } else {
-            window.location.hash = `/?scrollTo=${targetId.substring(1)}`;
+            // Jika kita di halaman lain
+            // 1. "Ingat" tujuan scroll kita
+            this.scrollTarget = targetId;
+            // 2. Arahkan ke halaman utama (ini akan memicu router)
+            window.location.hash = '/';
         }
-    }
+    }   
 
     navigateToPengajuan() {
         this.pengajuanController.showPengajuanPage();

@@ -1407,7 +1407,7 @@ body {
 .sidebar {
     list-style: none;
     margin: 0;
-    padding: 40px 20px;
+    padding: 60px 20px;
     position: fixed;
     top: 0;
     right: 0;
@@ -1444,7 +1444,22 @@ body {
     background-color: #334155;
 }
 
-/* Aturan untuk layar desktop */
+.sidebar-close-item {
+    position: absolute;
+    top: 1px;
+    right: 35px;
+}
+
+.sidebar-close-button {
+    background: none;
+    border: none;
+    color: #cbd5e1;
+    font-size: 2.5rem; /* Ukuran ikon 'x' */
+    line-height: 1;
+    cursor: pointer;
+    transition: all 0.3s ease;
+}
+
 .sidebar {
     display: none; /* Sembunyikan sidebar di desktop */
 }
