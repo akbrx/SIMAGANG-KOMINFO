@@ -955,8 +955,8 @@ body {
 /* CSS untuk catatan melayang dengan gaya modern */
 .floating-note {
     position: absolute;
-    bottom: 70px;
-    right: 30px;
+    top: 100px;
+    left: 30px;
     width: 280px;
     background-color: transparent; /* Warna biru muda */
     border: 1px solid #0D1164;
@@ -1604,12 +1604,10 @@ body {
     background-color: #e2e8f0;
 }
 
-/* /assets/css/style.css */
-
 /* Sesuaikan style tombol FAB yang sudah ada */
 .contact-fab {
-    width: 70px;
-    height: 70px;
+    width: 64px;
+    height: 64px;
     border-radius: 50%;
     /* ...properti lain... */
 

@@ -11,26 +11,34 @@ export class App {
         this.pengajuanController = new PengajuanController();
         this.lacakController = new LacakController();
         this.lupaIdController = new LupaIdController();
-        this.handleRouteChange();
-        this.scrollTarget = null;
+        this.setupMobileMenu();
         this.setupContactWidget();
 
-        // ini untuk berganti halamnan menggunakan dispatch event
+        // Bendera untuk mencegah panggilan ganda
+        this.initialLoad = true; 
 
-        // this.setupNavigationListener(); 
-        // this.setupGlobalNavLinks();     
-        // this.navigateToHome();
-
-        // ini untuk berganti halaman menggunakan window.location.hash
-        window.addEventListener('hashchange', () => this.handleRouteChange());
-        window.addEventListener('load', () => this.handleRouteChange());
-
-        this.setupDesktopNavLinks();
-        this.setupMobileMenu();
+        // Atur semua listener
+        this.setupListeners();
     }
 
-    // Listener untuk navigasi antar "halaman"
+    setupListeners() {
+        // Listener untuk perubahan hash (saat navigasi di dalam aplikasi)
+        window.addEventListener('hashchange', () => this.handleRouteChange());
+
+        // Listener untuk saat halaman pertama kali dimuat
+        window.addEventListener('load', () => {
+            this.handleRouteChange();
+            // Setelah load selesai, matikan bendera
+            this.initialLoad = false; 
+        });
+    }
+
     handleRouteChange() {
+        // Jika ini adalah panggilan kedua yang tidak perlu saat load, abaikan.
+        if (!this.initialLoad && event && event.type === 'hashchange' && !window.location.hash) {
+            return;
+        }
+
         const hash = window.location.hash.slice(1) || '/';
         const [path, queryString] = hash.split('?');
         const params = new URLSearchParams(queryString || '');
@@ -43,20 +51,10 @@ export class App {
                 this.lacakController.showLacakPage(params.get('id'));
                 break;
             case '/lupa-id':
-                // Teruskan parameter email ke controller
                 this.lupaIdController.showLupaIdPage(Object.fromEntries(params));
                 break;
             default:
                 this.homeController.showHomePage();
-                if (this.scrollTarget) {
-                    setTimeout(() => {
-                        const element = document.querySelector(this.scrollTarget);
-                        if (element) element.scrollIntoView({ behavior: 'smooth' });
-                        
-                        // Hapus ingatan setelah selesai scroll
-                        this.scrollTarget = null; 
-                    }, 100);
-                }
                 break;
         }
     }
