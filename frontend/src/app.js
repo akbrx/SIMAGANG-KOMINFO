@@ -14,8 +14,11 @@ export class App {
         this.setupMobileMenu();
         this.setupContactWidget();
 
-        // Bendera untuk mencegah panggilan ganda
-        this.initialLoad = true; 
+        this.handleRouteChange();
+        this.scrollTarget = null;
+        this.setupContactWidget();
+
+        // ini untuk berganti halamnan menggunakan dispatch event
 
         // this.setupNavigationListener(); 
         // this.setupGlobalNavLinks();     
@@ -57,6 +60,15 @@ export class App {
                 break;
             default:
                 this.homeController.showHomePage();
+                if (this.scrollTarget) {
+                    setTimeout(() => {
+                        const element = document.querySelector(this.scrollTarget);
+                        if (element) element.scrollIntoView({ behavior: 'smooth' });
+                        
+                        // Hapus ingatan setelah selesai scroll
+                        this.scrollTarget = null; 
+                    }, 100);
+                }
                 break;
         }
     }
