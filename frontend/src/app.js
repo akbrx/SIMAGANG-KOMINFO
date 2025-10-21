@@ -4,6 +4,7 @@ import { HomeController } from './controllers/home-controller.js';
 import { PengajuanController } from './controllers/pengajuan-controller.js';
 import { LacakController } from './controllers/lacak-controller.js';
 import { LupaIdController } from './controllers/lupa-id-controller.js';
+import { NotFoundController } from './controllers/404-controller.js';
 
 export class App {
     constructor() {
@@ -11,6 +12,7 @@ export class App {
         this.pengajuanController = new PengajuanController();
         this.lacakController = new LacakController();
         this.lupaIdController = new LupaIdController();
+        this.notFoundController = new NotFoundController();
         this.setupMobileMenu();
         this.setupContactWidget();
         this.setupDesktopNavLinks();
@@ -46,22 +48,21 @@ export class App {
         case '/lupa-id':
             this.lupaIdController.showLupaIdPage(Object.fromEntries(params));
             break;
-        default: // Untuk '/' atau hash kosong
+        case '/':
             this.homeController.showHomePage();
-            
-            // TAMBAHKAN KEMBALI LOGIKA INI
+        
             if (this.scrollTarget) {
                 setTimeout(() => {
                     const element = document.querySelector(this.scrollTarget);
                     if (element) element.scrollIntoView({ behavior: 'smooth' });
-                    // Hapus ingatan setelah selesai scroll
                     this.scrollTarget = null; 
-                }, 100); // delay untuk memastikan DOM sudah dirender
+                }, 100);
             }
             break;
+        default: // Untuk '/' atau hash kosong
+            this.notFoundController.showNotFoundPage();
+            break;
     }
-    // Sebaiknya hapus window.scrollTo() dari sini agar tidak selalu ke atas
-    // window.scrollTo({ top: 0, behavior: 'auto' });
 }
 
     setupDesktopNavLinks() {

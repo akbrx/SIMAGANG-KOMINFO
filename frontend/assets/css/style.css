@@ -1623,3 +1623,34 @@ body {
     height: 100%;
     object-fit: cover; /* Memastikan gambar memenuhi lingkaran tanpa distorsi */
 }
+
+/* === CSS HALAMAN 404 NOT FOUND === */
+
+.not-found-container {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    text-align: center;
+    height: calc(100vh - 80px); /* Tinggi layar dikurangi tinggi navbar */
+}
+
+.not-found-container h1 {
+    font-size: 8rem;
+    font-weight: 800;
+    color: #334155;
+    margin: 0;
+    line-height: 1;
+}
+
+.not-found-container h2 {
+    font-size: 2rem;
+    font-weight: 600;
+    color: #ffffff;
+    margin: 10px 0;
+}
+
+.not-found-container p {
+    color: #a9a9b3;
+    margin-bottom: 30px;
+}
