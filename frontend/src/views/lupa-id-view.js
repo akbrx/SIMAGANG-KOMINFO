@@ -10,7 +10,7 @@ export class LupaIdView {
         <div class="page-container">
             <div class="tracking-container">
                 <h1>Lupa ID Pelacakan?</h1>
-                <p>Tidak perlu khawatir jika Anda lupa ID Pelacakan. Cukup masukkan alamat email yang Anda gunakan saat mendaftar, dan kami akan mengirimkan tautan untuk mengakses halaman status pengajuan Anda.</p>
+                <p>Tidak perlu khawatir jika Anda lupa ID Pelacakan. Cukup masukkan alamat email yang Anda gunakan saat mendaftar, dan kami akan mengirimkan tautan untuk mengakses riwayat pengajuan Anda.</p>
                 
                 <form id="form-lupa-id" class="tracking-form-new">
                     <div class="input-wrapper">

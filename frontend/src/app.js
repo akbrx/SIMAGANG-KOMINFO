@@ -13,6 +13,7 @@ export class App {
         this.lupaIdController = new LupaIdController();
         this.setupMobileMenu();
         this.setupContactWidget();
+        this.setupDesktopNavLinks();
 
         // Bendera untuk mencegah panggilan ganda
         this.initialLoad = true; 
@@ -22,23 +23,15 @@ export class App {
     }
 
     setupListeners() {
-        // Listener untuk perubahan hash (saat navigasi di dalam aplikasi)
         window.addEventListener('hashchange', () => this.handleRouteChange());
 
-        // Listener untuk saat halaman pertama kali dimuat
         window.addEventListener('load', () => {
             this.handleRouteChange();
-            // Setelah load selesai, matikan bendera
             this.initialLoad = false; 
         });
     }
 
     handleRouteChange() {
-        // Jika ini adalah panggilan kedua yang tidak perlu saat load, abaikan.
-        if (!this.initialLoad && event && event.type === 'hashchange' && !window.location.hash) {
-            return;
-        }
-
         const hash = window.location.hash.slice(1) || '/';
         const [path, queryString] = hash.split('?');
         const params = new URLSearchParams(queryString || '');
@@ -53,10 +46,22 @@ export class App {
             case '/lupa-id':
                 this.lupaIdController.showLupaIdPage(Object.fromEntries(params));
                 break;
-            default:
+            default: // Untuk '/' atau hash kosong
                 this.homeController.showHomePage();
+                
+                // TAMBAHKAN KEMBALI LOGIKA INI
+                if (this.scrollTarget) {
+                    setTimeout(() => {
+                        const element = document.querySelector(this.scrollTarget);
+                        if (element) element.scrollIntoView({ behavior: 'smooth' });
+                        // Hapus ingatan setelah selesai scroll
+                        this.scrollTarget = null; 
+                    }, 100); // delay untuk memastikan DOM sudah dirender
+                }
                 break;
         }
+        // Sebaiknya hapus window.scrollTo() dari sini agar tidak selalu ke atas
+        // window.scrollTo({ top: 0, behavior: 'auto' });
     }
 
     setupDesktopNavLinks() {
