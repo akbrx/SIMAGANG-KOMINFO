@@ -19,7 +19,7 @@ class SubmissionTrackingLinkMail extends Mailable
 
     public function build()
     {
-        return $this->subject('Tautan Aman untuk Mengelola Pengajuan Anda')
+        return $this->subject('Lupa ID Pelacakan Anda?')
                     ->view('emails.submission-tracking-link');
     }
 }
