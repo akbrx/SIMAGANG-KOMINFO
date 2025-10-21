@@ -22,12 +22,6 @@ export class App {
         // this.navigateToHome();
 
         // 2. Dengarkan HANYA 'hashchange' untuk navigasi SELANJUTNYA
-        // Atur semua listener
-        this.setupListeners();
-    }
-
-    setupListeners() {
-        // Listener untuk perubahan hash (saat navigasi di dalam aplikasi)
         window.addEventListener('hashchange', () => this.handleRouteChange());
 
         this.setupDesktopNavLinks();
