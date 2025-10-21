@@ -15,11 +15,12 @@ export class App {
         this.setupContactWidget();
         this.setupDesktopNavLinks();
 
-        this.handleRouteChange();
-        this.scrollTarget = null;
-        this.setupContactWidget();
+        // Bendera untuk mencegah panggilan ganda
+        this.initialLoad = true; 
 
-        // ini untuk berganti halamnan menggunakan dispatch event
+        // Atur semua listener
+        this.setupListeners();
+    }
 
     setupListeners() {
         window.addEventListener('hashchange', () => this.handleRouteChange());
@@ -31,37 +32,37 @@ export class App {
     }
 
     handleRouteChange() {
-        const hash = window.location.hash.slice(1) || '/';
-        const [path, queryString] = hash.split('?');
-        const params = new URLSearchParams(queryString || '');
+    const hash = window.location.hash.slice(1) || '/';
+    const [path, queryString] = hash.split('?');
+    const params = new URLSearchParams(queryString || '');
 
-        switch (path) {
-            case '/pengajuan':
-                this.pengajuanController.showPengajuanPage();
-                break;
-            case '/lacak':
-                this.lacakController.showLacakPage(params.get('id'));
-                break;
-            case '/lupa-id':
-                this.lupaIdController.showLupaIdPage(Object.fromEntries(params));
-                break;
-            default: // Untuk '/' atau hash kosong
-                this.homeController.showHomePage();
-                
-                // TAMBAHKAN KEMBALI LOGIKA INI
-                if (this.scrollTarget) {
-                    setTimeout(() => {
-                        const element = document.querySelector(this.scrollTarget);
-                        if (element) element.scrollIntoView({ behavior: 'smooth' });
-                        // Hapus ingatan setelah selesai scroll
-                        this.scrollTarget = null; 
-                    }, 100); // delay untuk memastikan DOM sudah dirender
-                }
-                break;
-        }
-        // Sebaiknya hapus window.scrollTo() dari sini agar tidak selalu ke atas
-        // window.scrollTo({ top: 0, behavior: 'auto' });
+    switch (path) {
+        case '/pengajuan':
+            this.pengajuanController.showPengajuanPage();
+            break;
+        case '/lacak':
+            this.lacakController.showLacakPage(params.get('id'));
+            break;
+        case '/lupa-id':
+            this.lupaIdController.showLupaIdPage(Object.fromEntries(params));
+            break;
+        default: // Untuk '/' atau hash kosong
+            this.homeController.showHomePage();
+            
+            // TAMBAHKAN KEMBALI LOGIKA INI
+            if (this.scrollTarget) {
+                setTimeout(() => {
+                    const element = document.querySelector(this.scrollTarget);
+                    if (element) element.scrollIntoView({ behavior: 'smooth' });
+                    // Hapus ingatan setelah selesai scroll
+                    this.scrollTarget = null; 
+                }, 100); // delay untuk memastikan DOM sudah dirender
+            }
+            break;
     }
+    // Sebaiknya hapus window.scrollTo() dari sini agar tidak selalu ke atas
+    // window.scrollTo({ top: 0, behavior: 'auto' });
+}
 
     setupDesktopNavLinks() {
         const navLinks = {
