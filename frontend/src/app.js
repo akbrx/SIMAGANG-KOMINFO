@@ -57,7 +57,7 @@ export class App {
                 }, 100);
             }
             break;
-        default: // Untuk '/' atau hash kosong
+        default:
             this.notFoundController.showNotFoundPage();
             break;
     }
@@ -115,8 +115,8 @@ export class App {
                 if (link) {
                     link.addEventListener('click', (event) => {
                         event.preventDefault();
-                        this.navigateToHomeAndScroll(targetId); // Lakukan scroll
-                        closeMenu(); // Tutup menu setelah diklik
+                        this.navigateToHomeAndScroll(targetId);
+                        closeMenu();
                     });
                 }
             }
@@ -131,7 +131,7 @@ export class App {
         this.homeController.showHomePage();
     }
 
-    // Fungsi baru untuk klik navbar: tampilkan home, lalu scroll
+    // Fungsi untuk klik navbar: tampilkan home, lalu scroll
     navigateToHomeAndScroll(targetId) {
         const currentPath = window.location.hash.slice(1).split('?')[0] || '/';
 
@@ -141,9 +141,7 @@ export class App {
             if (element) element.scrollIntoView({ behavior: 'smooth' });
         } else {
             // Jika kita di halaman lain
-            // 1. "Ingat" tujuan scroll kita
             this.scrollTarget = targetId;
-            // 2. Arahkan ke halaman utama (ini akan memicu router)
             window.location.hash = '/';
         }
     }   
@@ -169,12 +167,10 @@ export class App {
         const closeBtn = document.getElementById('close-popup-btn');
 
         if (fab && popup && closeBtn) {
-            // Tampilkan/sembunyikan pop-up saat tombol FAB diklik
             fab.addEventListener('click', () => {
                 popup.classList.toggle('is-active');
             });
 
-            // Sembunyikan pop-up saat tombol close diklik
             closeBtn.addEventListener('click', () => {
                 popup.classList.remove('is-active');
             });
@@ -192,7 +188,6 @@ export function showNotification(title, message, type = 'warning') {
 
     if (!modal || !modalContent) return;
 
-    // Definisikan ikon dan class untuk setiap tipe notifikasi
     const notificationTypes = {
         success: {
             className: 'notif-success',
