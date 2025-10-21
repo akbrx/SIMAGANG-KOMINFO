@@ -21,9 +21,8 @@ export class App {
         // this.setupGlobalNavLinks();     
         // this.navigateToHome();
 
-        // ini untuk berganti halaman menggunakan window.location.hash
+        // 2. Dengarkan HANYA 'hashchange' untuk navigasi SELANJUTNYA
         window.addEventListener('hashchange', () => this.handleRouteChange());
-        window.addEventListener('load', () => this.handleRouteChange());
 
         this.setupDesktopNavLinks();
         this.setupMobileMenu();
