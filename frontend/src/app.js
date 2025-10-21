@@ -1,4 +1,3 @@
-// /src/app.js
 import { PengajuanView } from './views/pengajuan-view.js';
 import { HomeController } from './controllers/home-controller.js';
 import { PengajuanController } from './controllers/pengajuan-controller.js';
@@ -13,14 +12,13 @@ export class App {
         this.lacakController = new LacakController();
         this.lupaIdController = new LupaIdController();
         this.notFoundController = new NotFoundController();
+        
+        this.initialLoad = true;
+        this.scrollTarget = null;
+        
         this.setupMobileMenu();
         this.setupContactWidget();
         this.setupDesktopNavLinks();
-
-        // Bendera untuk mencegah panggilan ganda
-        this.initialLoad = true; 
-
-        // Atur semua listener
         this.setupListeners();
     }
 
