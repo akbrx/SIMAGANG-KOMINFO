@@ -15,12 +15,11 @@ export class App {
         this.setupContactWidget();
         this.setupDesktopNavLinks();
 
-        // Bendera untuk mencegah panggilan ganda
-        this.initialLoad = true; 
+        this.handleRouteChange();
+        this.scrollTarget = null;
+        this.setupContactWidget();
 
-        // Atur semua listener
-        this.setupListeners();
-    }
+        // ini untuk berganti halamnan menggunakan dispatch event
 
     setupListeners() {
         window.addEventListener('hashchange', () => this.handleRouteChange());
