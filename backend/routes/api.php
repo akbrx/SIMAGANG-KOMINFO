@@ -61,5 +61,8 @@ Route::prefix('admin')->group(function () {
         
         // GET /api/admin/pengajuan/{id}/file: Mendapatkan URL file pengajuan (Admin-only)
         Route::get('pengajuan/{id}/file', [AdminSubmissionController::class, 'downloadFile']);
+        
+        // [BARU] DELETE /api/admin/pengajuan/{id}: Menghapus pengajuan
+        Route::delete('pengajuan/{id}', [AdminSubmissionController::class, 'destroy']);
     });
 });

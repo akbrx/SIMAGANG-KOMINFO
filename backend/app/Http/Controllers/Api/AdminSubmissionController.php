@@ -141,4 +141,49 @@ class AdminSubmissionController extends Controller
             'file_url' => $fileUrl,
         ]);
     }
+    /**
+     * [Endpoint DELETE /api/admin/submissions/{id}]
+     * Menghapus data pengajuan secara permanen.
+     */
+    public function destroy($id)
+    {
+        // 1. Cari data pengajuan
+        $submission = Submission::find($id);
+
+        // 2. Jika data pengajuan tidak ditemukan, kirim response 404
+        if (!$submission) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data pengajuan tidak ditemukan.',
+            ], 404);
+        }
+
+        try {
+            // 3. Simpan path file untuk dihapus nanti
+            $filePath = $submission->submission_file;
+
+            // 4. Hapus data dari database
+            $submission->delete();
+
+            // 5. Hapus file fisik dari storage SETELAH data db berhasil dihapus
+            // Ini untuk mencegah file terhapus jika proses hapus database gagal.
+            if ($filePath && Storage::disk('public')->exists($filePath)) {
+                Storage::disk('public')->delete($filePath);
+            }
+
+            // 6. Kirim response sukses
+            return response()->json([
+                'success' => true,
+                'message' => 'Data pengajuan berhasil dihapus.'
+            ], 200);
+
+        } catch (Exception $e) {
+            // 7. Tangani jika ada error server (misal: error database)
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat menghapus data.',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
 }
