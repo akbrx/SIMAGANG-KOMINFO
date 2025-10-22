@@ -8,6 +8,41 @@ import * as dashboardController from './controllers/dashboard-controller.js';
 import * as suratView from './views/surat-view.js';
 import * as suratController from './controllers/surat-controller.js';
 
+export function showConfirmation(title, message, confirmText = 'Ya') {
+    return new Promise((resolve) => {
+        const modal = document.getElementById('confirmation-modal');
+        const titleEl = document.getElementById('confirmation-title');
+        const messageEl = document.getElementById('confirmation-message');
+        const yesBtn = document.getElementById('confirm-yes-btn');
+        const noBtn = document.getElementById('confirm-no-btn');
+
+        if (!modal || !titleEl || !messageEl || !yesBtn || !noBtn) {
+            console.error('Elemen modal konfirmasi tidak ditemukan.');
+            resolve(false);
+            return;
+        }
+
+        titleEl.textContent = title;
+        messageEl.textContent = message;
+        yesBtn.textContent = confirmText;
+
+        modal.classList.add('show');
+
+        const cleanupAndClose = (result) => {
+            modal.classList.remove('show');
+            yesBtn.removeEventListener('click', handleYes);
+            noBtn.removeEventListener('click', handleNo);
+            resolve(result);
+        };
+
+        const handleYes = () => cleanupAndClose(true);
+        const handleNo = () => cleanupAndClose(false);
+
+        yesBtn.addEventListener('click', handleYes);
+        noBtn.addEventListener('click', handleNo);
+    });
+}
+
 // --- ROUTER SEDERHANA ---
 const routes = {
     '#login': { view: loginView, controller: loginController },

@@ -1,135 +1,168 @@
-// src/views/surat-view.js
+/**
+ * @file View untuk Halaman Surat.
+ * Menyediakan template HTML dan fungsi untuk merender komponen UI.
+ */
 
-// --- Helper Functions untuk Tampilan (pindahan dari controller) ---
-const formatDate = (dateString) => {
-    if (!dateString) return 'Tanggal tidak tersedia';
-    try {
-        const options = { year: 'numeric', month: 'long', day: 'numeric' };
-        // Mencoba format yang lebih robust untuk tanggal dari Laravel
-        return new Date(dateString).toLocaleDateString('id-ID', options);
-    } catch (e) {
-        return dateString;
-    }
-};
-const getFileName = (url) => url ? url.substring(url.lastIndexOf('/') + 1) : 'Tidak ada file';
-const getStatusClass = (status) => {
-    if (status === 'DITERIMA') return 'status-approved';
-    if (status === 'DITOLAK') return 'status-rejected';
-    if (status === 'DISPOSISI') return 'status-disposition'; // <-- BARU
-    if (status === 'DIAJUKAN') return 'status-submitted';   // <-- BARU
-    return 'status-default'; // <-- Fallback jika ada status lain
-};
-
-
-// FUNGSI 1: Membuat kerangka statis halaman
-function render() {
+/**
+ * Merender layout utama halaman surat, termasuk filter.
+ * @returns {string} String HTML untuk seluruh halaman.
+ */
+export function render() {
     return `
-        <div class="page-container">
-            <h1>Daftar Pengajuan Surat Magang</h1>
+        <div class="page-container-surat">
+            <div class="page-header">
+                <h2 class="page-title">Daftar Surat Pengajuan</h2>
+                <div class="filter-container">
+                    <div class="filter-group">
+                        <label for="month-filter">Tampilkan Berdasarkan Bulan:</label>
+                        <select id="month-filter" class="filter-select">
+                            <option value="semua">Semua Bulan</option>
+                            <option value="1">Januari</option>
+                            <option value="2">Februari</option>
+                            <option value="3">Maret</option>
+                            <option value="4">April</option>
+                            <option value="5">Mei</option>
+                            <option value="6">Juni</option>
+                            <option value="7">Juli</option>
+                            <option value="8">Agustus</option>
+                            <option value="9">September</option>
+                            <option value="10">Oktober</option>
+                            <option value="11">November</option>
+                            <option value="12">Desember</option>
+                        </select>
+                    </div>
+                    <div class="filter-group">
+                        <label for="year-filter">Tahun:</label>
+                        <select id="year-filter" class="filter-select">
+                            <option value="semua">Semua Tahun</option>
+                        </select>
+                    </div>
+                    <button id="reset-filter-btn" class="btn-secondary" title="Hapus semua filter">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
+                            <path fill-rule="evenodd" d="M8 3a5 5 0 1 0 4.546 2.914.5.5 0 0 1 .908-.417A6 6 0 1 1 8 2z"/>
+                            <path d="M8 4.466V.534a.25.25 0 0 1 .41-.192l2.36 1.966c.12.1.12.284 0 .384L8.41 4.658A.25.25 0 0 1 8 4.466"/>
+                        </svg>
+                        Reset
+                    </button>
+                </div>
+            </div>
             <div id="cardGrid" class="card-grid-surat"></div>
         </div>
+
         <div id="detailModal" class="modal-overlay">
-          <div class="modal-content">
-            <button id="closeModalBtn" class="modal-close-btn">&times;</button>
-            <h2>Detail Pengajuan</h2>
-            <div id="modalBody" class="detail-grid"></div>
-          </div>
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h2 id="modal-title">Detail Pengajuan</h2>
+                    <button id="closeModalBtn" class="modal-close-btn">&times;</button>
+                </div>
+                <div id="modalBody" class="modal-body"></div>
+                <div class="modal-footer" id="modalFooter"></div>
+            </div>
         </div>
     `;
 }
 
-// FUNGSI 2: Mengisi kerangka dengan kartu-kartu dinamis (pindahan dari controller)
-// --- Fungsi Utama untuk Merender Kartu ---
-function renderCards(cardGrid, daftarPengajuan) {
-    if (!daftarPengajuan || daftarPengajuan.length === 0) {
-        cardGrid.innerHTML = `<p class="info-message">Belum ada data pengajuan.</p>`;
+/**
+ * Merender kartu-kartu pengajuan.
+ * @param {HTMLElement} container - Elemen grid.
+ * @param {Array} submissions - Array data pengajuan.
+ */
+export function renderCards(container, submissions) {
+    if (!container) return;
+    if (submissions.length === 0) {
+        container.innerHTML = `<p class="info-message">Tidak ada surat yang cocok dengan filter yang dipilih.</p>`;
         return;
     }
-    cardGrid.innerHTML = '';
-    daftarPengajuan.forEach(submission => {
-        const cardElement = document.createElement('div');
-        cardElement.className = 'card-surat';
-        cardElement.innerHTML = `
-            <div class="card-header-surat">
-                <h3 class="student-name">${submission.student?.nama ?? 'Data Mahasiswa Hilang'}</h3>
+
+    const getStatusClass = (status) => {
+        const s = status.toUpperCase();
+        if (s === 'DITERIMA') return 'status-approved';
+        if (s === 'DITOLAK') return 'status-rejected';
+        if (s === 'DISPOSISI') return 'status-disposition';
+        if (s === 'DIAJUKAN') return 'status-submitted';
+        return '';
+    };
+
+    container.innerHTML = submissions.map(sub => {
+        const studentName = sub.student?.nama ?? 'Data Mahasiswa Hilang';
+        const tglPengajuan = new Date(sub.created_at).toLocaleDateString('id-ID', { day: '2-digit', month: 'long', year: 'numeric' });
+        const noHp = sub.student?.nomor_telepon ?? 'N/A';
+
+        return `
+            <div class="card-surat" data-id="${sub.id}">
+                <div class="card-header-surat">
+                    <h3 class="student-name">${studentName}</h3>
                 </div>
-            <div class="card-body-surat">
-                <div class="info-row">
-                    <strong>Status:</strong>
-                    <span class="status-badge ${getStatusClass(submission.status)}">${submission.status}</span>
-                </div>
-                
-                <div class="info-row">
-                    <strong>Diajukan pada:</strong>
-                    <span>${formatDate(submission.created_at)}</span>
-                </div>
-                <div class="info-row file-info">
-                    <strong>Surat Permohonan:</strong>
-                    <a href="#" target="_blank" class="file-link">📄 ${submission.original_filename}</a>
-                </div>
-            </div>
-            <div class="card-actions">
-                <button class="btn btn-primary" data-id="${submission.id}">Detail</button>
-                <div class="select-wrapper">
-                    <select class="select-status" data-id="${submission.id}">
-                        <option value="DIAJUKAN" ${submission.status === 'DIAJUKAN' ? 'selected' : ''}>DIAJUKAN</option>
-                        <option value="DISPOSISI" ${submission.status === 'DISPOSISI' ? 'selected' : ''}>DISPOSISI</option>
-                        <option value="DITERIMA" ${submission.status === 'DITERIMA' ? 'selected' : ''}>DITERIMA</option>
-                        <option value="DITOLAK" ${submission.status === 'DITOLAK' ? 'selected' : ''}>DITOLAK</option>
-                    </select>
+                <div class="card-body-surat">
+                    <div class="info-item">
+                        <span class="label">Status</span>
+                        <span class="value">
+                            <span class="status-badge ${getStatusClass(sub.status)}">${sub.status}</span>
+                        </span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Diajukan pada</span>
+                        <span class="value">${tglPengajuan}</span>
+                    </div>
+                    <div class="info-item">
+                        <span class="label">Nomor Handphone</span>
+                        <span class="value">${noHp}</span>
+                    </div>
                 </div>
             </div>
         `;
-        cardGrid.appendChild(cardElement);
-    });
+    }).join('');
 }
 
-// FUNGSI 3: Mengisi konten modal
-function renderModalContent(modalBodyElement, submission) {
+/**
+ * Merender konten detail di dalam modal.
+ * @param {HTMLElement} modalBody - Elemen body modal.
+ * @param {HTMLElement} modalFooter - Elemen footer modal.
+ * @param {Object} submission - Objek data pengajuan.
+ */
+export function renderModalContent(modalBody, modalFooter, submission) {
     if (!submission) return;
-    // Gunakan ?. dan ?? untuk setiap data student agar aman
-    const nama = submission.student?.nama ?? 'N/A';
-    const instansi = submission.student?.asal_sekolah ?? 'N/A';
-    const jurusan = submission.student?.jurusan ?? 'N/A';
-    const email = submission.student?.email ?? 'N/A';
-    const nomor_telepon = submission.student?.nomor_telepon ?? 'N/A';
-    const durasi_magang = submission.durasi_magang ?? 'N/A';
-    const unique_token = submission.unique_token ?? 'N/A';
-    const processed_at = formatDate(submission.processed_at);
-    const updated_at = formatDate(submission.updated_at);
-    const accepted_at = formatDate(submission.accepted_at);
-    const rejected_at = formatDate(submission.rejected_at);
-    const nama_admin = submission.processor?.nama ?? 'N/A';
 
-    // 1. Siapkan variabel kosong untuk baris "Diproses oleh"
+    const formatDate = (dateString) => {
+        if (!dateString) return 'N/A';
+        return new Date(dateString).toLocaleString('id-ID', { dateStyle: 'long', timeStyle: 'short' });
+    };
+
+    const student = submission.student ?? {};
+    const processor = submission.processor ?? {};
+
     let processedByHtml = '';
-
-    // 2. Cek apakah ada data admin (processor) DAN waktu prosesnya (processed_at)
-    if (submission.processor && submission.processed_at) {
-        const nama_admin = submission.processor.nama;
-        const waktu_proses = formatDate(submission.processed_at);
-
-        // 3. Jika ada, isi variabel dengan string HTML-nya
-        processedByHtml = `
-            <div class="detail-item">
-                <strong>Diproses oleh:</strong> 
-                <span>${nama_admin} pada ${waktu_proses}</span>
-            </div>
-        `;
+    if (processor.nama && submission.processed_at) {
+        processedByHtml = `<strong>Diproses oleh:</strong> <span>${processor.nama} pada ${formatDate(submission.processed_at)}</span>`;
     }
 
-    // 4. Bangun string HTML final, sisipkan baris kondisional di paling atas
-    modalBodyElement.innerHTML = `
-        ${processedByHtml}
-        <div class="detail-item"><strong>Nama:</strong> ${nama}</div>
-        <div class="detail-item"><strong>Instansi Asal:</strong> ${instansi}</div>
-        <div class="detail-item"><strong>Jurusan:</strong> ${jurusan}</div>
-        <div class="detail-item"><strong>Alamat Email Aktif:</strong> ${email}</div>
-        <div class="detail-item"><strong>No. Handphone:</strong> ${nomor_telepon}</div>
-        <div class="detail-item"><strong>Lama Magang:</strong> ${durasi_magang}</div> 
-        <div class="detail-item"><strong>Token:</strong> <span>${unique_token}</span></div>
+    // Render Body Modal
+    modalBody.innerHTML = `
+        <div class="detail-grid">
+            <div class="detail-item"><strong>Nama Lengkap</strong><span>${student.nama ?? 'N/A'}</span></div>
+            <div class="detail-item"><strong>Instansi Asal</strong><span>${student.asal_sekolah ?? 'N/A'}</span></div>
+            <div class="detail-item"><strong>Jurusan</strong><span>${student.jurusan ?? 'N/A'}</span></div>
+            <div class="detail-item"><strong>Alamat Email</strong><span>${student.email ?? 'N/A'}</span></div>
+            <div class="detail-item"><strong>No. Handphone</strong><span>${student.nomor_telepon ?? 'N/A'}</span></div>
+            <div class="detail-item"><strong>Lama Magang</strong><span>${submission.durasi_magang ?? 'N/A'}</span></div>
+            <div class="detail-item"><strong>ID Lacak</strong><span>${submission.unique_token ?? 'N/A'}</span></div>
+            <div class="detail-item"><strong>Surat Permohonan</strong><a href="#" class="file-link-modal" data-id="${submission.id}">📄 ${submission.original_filename || 'Lihat File'}</a></div>
+            ${processedByHtml ? `<div class="detail-item full-width">${processedByHtml}</div>` : ''}
+        </div>
+    `;
+
+    // Render Footer Modal
+    modalFooter.innerHTML = `
+        <button class="btn-danger" id="delete-btn" data-id="${submission.id}">Hapus</button>
+        <div class="modal-actions">
+            <label for="select-status-modal">Ubah Status:</label>
+            <select class="select-status-modal" id="select-status-modal" data-id="${submission.id}">
+                <option value="DIAJUKAN" ${submission.status === 'DIAJUKAN' ? 'selected' : ''}>DIAJUKAN</option>
+                <option value="DISPOSISI" ${submission.status === 'DISPOSISI' ? 'selected' : ''}>DISPOSISI</option>
+                <option value="DITERIMA" ${submission.status === 'DITERIMA' ? 'selected' : ''}>DITERIMA</option>
+                <option value="DITOLAK" ${submission.status === 'DITOLAK' ? 'selected' : ''}>DITOLAK</option>
+            </select>
+        </div>
     `;
 }
 
-// Ekspor semua fungsi yang akan digunakan oleh file lain
-export { render, renderCards, renderModalContent };
